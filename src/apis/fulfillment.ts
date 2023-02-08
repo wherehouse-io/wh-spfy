@@ -5,6 +5,7 @@ import ShopifyService from "./shopify";
 import { EShopifyFulfillmentStatus } from "../types/fulfillment";
 import Shopify from "shopify-api-node";
 import { ShopifyUrlInstance } from "../types/shopify";
+import { getShopifyBaseUrl } from "../helpers";
 
 export default class FulfillmentService {
   /**
@@ -115,7 +116,10 @@ export default class FulfillmentService {
     try {
       // return shopify.fulfillment.list(Number(externalOrderId));
 
-      const url = `https://${shopify.apiKey}:${shopify.password}@${shopify.shopName}/admin/api/2022-10/orders/${externalOrderId}/fulfillments.json`;
+      const url = `${getShopifyBaseUrl(
+        shopify,
+        "2022-10"
+      )}orders/${externalOrderId}/fulfillments.json`;
       logger.info(`Shopify call: [${url}]`);
 
       const { data } = await axios({
@@ -140,7 +144,9 @@ export default class FulfillmentService {
     try {
       // await shopify.fulfillment.create(orderId, fulfillmentDetails);
 
-      const url = `https://${shopify.apiKey}:${shopify.password}@${shopify.shopName}/admin/api/2021-01/orders/${externalOrderId}/fulfillments.json`;
+      const url = `${getShopifyBaseUrl(
+        shopify
+      )}orders/${externalOrderId}/fulfillments.json`;
       logger.info(`Shopify call: [${url}]`);
 
       const { data } = await axios({
