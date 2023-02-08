@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getShopifyBaseUrl } from "../helpers";
 import { logger } from "../logger";
 
 export default class WebhookService {
@@ -9,7 +10,14 @@ export default class WebhookService {
   }) {
     try {
       const { shop, key, secret } = data;
-      const apiUrl = `https://${key}:${secret}@${shop}/admin/api/2022-10/webhooks.json`;
+      const apiUrl = `${getShopifyBaseUrl(
+        {
+          shopName: shop,
+          apiKey: key,
+          password: secret,
+        },
+        "2022-10"
+      )}webhooks.json`;
       const errorWebhooks: any = [];
       logger.info(
         `!!!!!Register Webhook started!!!!!! ${JSON.stringify(data, null, 2)}`
