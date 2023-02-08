@@ -1,3 +1,4 @@
+import { ShopifyUrlInstance } from "../types/shopify";
 import { SHOPIFY_WEIGHT_UNITS } from "../types/product";
 /**
  * delay the exection of script for particular time period
@@ -11,3 +12,4 @@ export declare const asyncDelay: (milliSeconds?: number) => Promise<null | Error
  * @param {number} weight
  */
 export declare const convertShopifyWeightToGrams: (weightUnit: SHOPIFY_WEIGHT_UNITS, weight: number) => number;
+export declare const getShopifyBaseUrl: (shopify: ShopifyUrlInstance, version?: string) => string;

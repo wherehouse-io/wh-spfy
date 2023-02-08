@@ -1,3 +1,4 @@
+import { ShopifyUrlInstance } from "../types/shopify";
 import { SHOPIFY_WEIGHT_UNITS } from "../types/product";
 
 /**
@@ -40,4 +41,15 @@ export const convertShopifyWeightToGrams = (
     parseFloat(String(shopifyWeightConvertMap[weightUnit])) *
     parseFloat(String(weight))
   );
+};
+
+export const getShopifyBaseUrl = (
+  shopify: ShopifyUrlInstance,
+  version?: string
+) => {
+  if (version) {
+    return `https://${shopify.apiKey}:${shopify.password}@${shopify.shopName}/admin/api/${version}/`;
+  }
+
+  return `https://${shopify.apiKey}:${shopify.password}@${shopify.shopName}/admin/api/2021-01/`;
 };
