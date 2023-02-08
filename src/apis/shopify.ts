@@ -7,7 +7,7 @@ import {
   ShopifyUrlInstance,
   SHOP_TYPE,
 } from "../types/shopify";
-import { asyncDelay } from "../helpers";
+import { asyncDelay, getShopifyBaseUrl } from "../helpers";
 
 export default class ShopifyService {
   // maintain a local cache for shop api keys, password etc.
@@ -424,7 +424,11 @@ export default class ShopifyService {
       //   wherehouseFulfillment.id
       // );
 
-      const url = `https://${shopify.apiKey}:${shopify.password}@${shopify.shopName}/admin/api/2021-01/orders/${externalOrderId}/fulfillments/${wherehouseFulfillment.id}/cancel.json`;
+      const url = `${getShopifyBaseUrl(
+        shopify
+      )}orders/${externalOrderId}/fulfillments/${
+        wherehouseFulfillment.id
+      }/cancel.json`;
       logger.info(`Shopify call: [${url}]`);
 
       const { data } = await axios({
@@ -449,7 +453,7 @@ export default class ShopifyService {
     try {
       // const shopifyOrderData = await shopify.order.get(Number(externalOrderId));
 
-      const url = `https://${shopify.apiKey}:${shopify.password}@${shopify.shopName}/admin/api/2021-01/orders/${externalOrderId}.json`;
+      const url = `${getShopifyBaseUrl(shopify)}orders/${externalOrderId}.json`;
       logger.info(`Shopify call: [${url}]`);
 
       const { data } = await axios({
@@ -470,7 +474,7 @@ export default class ShopifyService {
     try {
       // return shopifyRef.location.list();
 
-      const url = `https://${shopify.apiKey}:${shopify.password}@${shopify.shopName}/admin/api/2021-01/locations.json`;
+      const url = `${getShopifyBaseUrl(shopify)}locations.json`;
       logger.info(`Shopify call: [${url}]`);
 
       const { data } = await axios({
@@ -494,7 +498,9 @@ export default class ShopifyService {
     try {
       // return shopify.order.cancel(Number(externalOrderId));
 
-      const url = `https://${shopify.apiKey}:${shopify.password}@${shopify.shopName}/admin/api/2021-01/orders/${externalOrderId}/cancel.json`;
+      const url = `${getShopifyBaseUrl(
+        shopify
+      )}orders/${externalOrderId}/cancel.json`;
       logger.info(`Shopify call: [${url}]`);
 
       const { data } = await axios({
@@ -519,7 +525,9 @@ export default class ShopifyService {
     try {
       // const { variants } = await shopify.product.get(Number(productId));
 
-      const url = `https://${shopify.apiKey}:${shopify.password}@${shopify.shopName}/admin/api/2021-01/products.json?limit=${limitNumber}`;
+      const url = `${getShopifyBaseUrl(
+        shopify
+      )}products.json?limit=${limitNumber}`;
       logger.info(`Shopify call: [${url}]`);
 
       const { data } = await axios({
@@ -540,7 +548,7 @@ export default class ShopifyService {
     try {
       // const { variants } = await shopify.product.get(Number(productId));
 
-      const url = `https://${shopify.apiKey}:${shopify.password}@${shopify.shopName}/admin/api/2021-01/products/${productId}.json`;
+      const url = `${getShopifyBaseUrl(shopify)}products/${productId}.json`;
       logger.info(`Shopify call: [${url}]`);
 
       const { data } = await axios({
@@ -565,7 +573,9 @@ export default class ShopifyService {
       // const { harmonized_system_code } =
       //   await shopify.inventoryItem.get(inventory_item_id);
 
-      const url = `https://${shopify.apiKey}:${shopify.password}@${shopify.shopName}/admin/api/2021-01/inventory_items/${inventoryItemId}.json`;
+      const url = `${getShopifyBaseUrl(
+        shopify
+      )}inventory_items/${inventoryItemId}.json`;
       logger.info(`Shopify call: [${url}]`);
 
       const { data } = await axios({
