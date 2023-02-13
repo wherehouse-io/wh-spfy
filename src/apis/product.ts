@@ -1,7 +1,5 @@
 import camelcaseKeys from "camelcase-keys";
-import Shopify from "shopify-api-node";
 import { IProduct } from "../types/product";
-import { logger } from "../logger";
 import {
   DEFAULT_PAGINATION_LIMIT_SHOPIFY_PRODUCT_LIST,
   PRODUCT_TYPE,
@@ -11,7 +9,7 @@ import {
   IAddress,
 } from "../types/product";
 import { convertShopifyWeightToGrams } from "../helpers";
-import { ShopifyUrlInstance } from "types/shopify";
+import { ShopifyUrlInstance } from "../types/shopify";
 import ShopifyService from "./shopify";
 
 export default class ProductService {

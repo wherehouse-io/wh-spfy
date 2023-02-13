@@ -3,7 +3,6 @@ import { logger } from "../logger";
 import _ from "lodash";
 import ShopifyService from "./shopify";
 import { EShopifyFulfillmentStatus } from "../types/fulfillment";
-import Shopify from "shopify-api-node";
 import { ShopifyUrlInstance } from "../types/shopify";
 import { getShopifyBaseUrl } from "../helpers";
 

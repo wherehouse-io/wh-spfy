@@ -1,6 +1,6 @@
 import { IProduct } from "../types/product";
 import { IAddress } from "../types/product";
-import { ShopifyUrlInstance } from "types/shopify";
+import { ShopifyUrlInstance } from "../types/shopify";
 export default class ProductService {
     /**
      * Used to extract Product Data from shopify webhook
