@@ -308,9 +308,9 @@ export default class ShopifyService {
    */
   static async markCODOrderAsPaid(externalOrderId: string, userId: string) {
     try {
-      const shopify = await this.getShopifyInstance(userId);
+      const shopify = await this.getShopifyUrlInstance(userId);
 
-      const createdTransactions = await this.createTransactionAtShopify(
+      const createdTransactions = await this.createTransactionApi(
         shopify,
         externalOrderId
       );
@@ -587,6 +587,41 @@ export default class ShopifyService {
       });
 
       return data.inventory_item;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  static async createTransactionApi(
+    shopify: ShopifyUrlInstance,
+    externalOrderId: string
+  ) {
+    try {
+      // const createdTransactions = await this.createTransactionAtShopify(
+      //   shopify,
+      //   externalOrderId
+      // );
+
+      const url = `${getShopifyBaseUrl(
+        shopify
+      )}orders/${externalOrderId}/transactions.json`;
+      logger.info(`Shopify call: [${url}]`);
+
+      const { data } = await axios({
+        method: "POST",
+        url,
+        data: JSON.stringify({
+          transaction: {
+            source: "external",
+            kind: "capture",
+          },
+        }),
+        headers: {
+          "Content-Type": " application/json",
+        },
+      });
+
+      return data.transaction;
     } catch (e) {
       throw e;
     }
