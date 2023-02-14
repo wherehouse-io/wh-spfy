@@ -14,7 +14,8 @@ import ShopifyService from "./shopify";
 
 export default class ProductService {
   /**
-   * Used to extract Product Data from shopify webhook
+   *
+   * Used to extract Product Data from shopify webhook which is used in ingress and need to move from local shopify service to public repo
    * @param{string} companyId (Login use company Id)
    * @param{EVENT_TYPE} productData (All ProductData array from shopify Products List)
    * @return{IProduct}
