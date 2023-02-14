@@ -1,5 +1,6 @@
-import { ShopifyUrlInstance } from "../types/shopify";
+import { ShopifyUrlInstance, SHOP_TYPE } from "../types/shopify";
 import { SHOPIFY_WEIGHT_UNITS } from "../types/product";
+import { ADDITIONAL_HEADER, WEBHOOK_ID_KEY } from "../constants/product";
 
 /**
  * delay the exection of script for particular time period
@@ -52,4 +53,31 @@ export const getShopifyBaseUrl = (
   }
 
   return `https://${shopify.apiKey}:${shopify.password}@${shopify.shopName}/admin/api/2021-01/`;
+};
+
+/**
+ * Used to extract companyId from the request
+ * @param {SHOP_TYPE} shopType
+ * @param {IRequest} req
+ * @return {string}
+ */
+export const getCompanyId = (shopType: SHOP_TYPE, req: any): string => {
+  return String(req.headers[ADDITIONAL_HEADER.COMPANY]);
+};
+
+/**
+ * Used to extract Webhook Id from the request
+ * @param {SHOP_TYPE} shopType
+ * @param {IRequest} req
+ * @return {string}
+ */
+export const getWebhookId = (shopType: SHOP_TYPE, req: any): string => {
+  let webhookId: string = "";
+  const ShopTypeWebhookIdMap = {
+    [SHOP_TYPE.SHOPIFY]: WEBHOOK_ID_KEY.SHOPIFY,
+    [SHOP_TYPE.WP]: WEBHOOK_ID_KEY.WP,
+    [SHOP_TYPE.CUSTOM]: WEBHOOK_ID_KEY.CUSTOM,
+  };
+  webhookId = req.headers[ShopTypeWebhookIdMap[shopType]].toString();
+  return webhookId;
 };

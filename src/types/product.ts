@@ -3,6 +3,21 @@ import { FulfillmentProviders } from "./fulfillment";
 // This limit is for shopify product listing, it can be maximum 100
 export const DEFAULT_PAGINATION_LIMIT_SHOPIFY_PRODUCT_LIST = 100;
 
+export enum EVENT_TYPE {
+  CREATE = "create",
+  UPDATE = "update",
+  DELETE = "delete",
+  NO_UPDATE = "no_update",
+}
+
+export interface IProductDelete {
+  productId: string;
+  eventType: string;
+  companyId: string;
+  shopType: SHOP_TYPE;
+  webhookId: string;
+}
+
 export enum SHOP_TYPE {
   SHOPIFY = "shopify",
   WP = "wordpress",
@@ -126,7 +141,7 @@ export interface IProductIngress {
   isActive: boolean;
 }
 
-export interface IProduct {
+export interface IProductOms {
   variantId: string;
   shopType: SHOP_TYPE;
   companyId: string;
@@ -152,4 +167,33 @@ export interface IProduct {
   dimensions: IDimensions;
   active?: boolean;
   gstPercentage?: any;
+}
+
+export interface IProduct {
+  _id: string;
+  webhookId: string;
+  variantId: string;
+  eventType: string;
+  shopType: SHOP_TYPE;
+  companyId: string;
+  productTitle: string;
+  category: string;
+  variantTitle: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  weight: number;
+  weightUnit: string;
+  taxable: boolean;
+  isActive: boolean;
+  sku: string;
+  skuId?: string;
+  productId: string;
+  price: number;
+  inventoryQuantity?: number;
+  barcode?: string;
+  hsnCode?: string;
+  handle?: string;
+  imageUrls?: string[];
+  productType: PRODUCT_TYPE;
+  dimensions?: IDimensions;
 }
