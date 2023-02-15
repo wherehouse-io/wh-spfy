@@ -3,3 +3,4 @@ package-lock.json
 .vscode
 coverage
 .gitt
+.DS_Store
