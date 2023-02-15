@@ -10,7 +10,7 @@ export default class ProductService {
      * @param{EVENT_TYPE} eventType
      * @return{IProduct}
      */
-    static extractProductData(req: any, productId: string, eventType: EVENT_TYPE, productData?: any): IProduct[] | IProductDelete;
+    static extractProductDataForIngress(req: any, productId: string, eventType: EVENT_TYPE, productData?: any): IProduct[] | IProductDelete;
     /**
      *
      * Used to extract Product Data from shopify webhook which is used in ingress and need to move from local shopify service to public repo
@@ -19,7 +19,7 @@ export default class ProductService {
      * @return{IProduct}
      *
      */
-    static extractProductDataForOms(companyId: string, productData: any): IProductOms[];
+    static extractProductData(companyId: string, productData: any): IProductOms[];
     /**
      * This Function is used to get all products from shopify
      * @param shopifyInstance (Shopify config Instance)

@@ -31,7 +31,7 @@ export default class ProductService {
    * @param{EVENT_TYPE} eventType
    * @return{IProduct}
    */
-  public static extractProductData(
+  public static extractProductDataForIngress(
     req: any,
     productId: string,
     eventType: EVENT_TYPE,
@@ -107,7 +107,7 @@ export default class ProductService {
    * @return{IProduct}
    *
    */
-  static extractProductDataForOms(
+  static extractProductData(
     companyId: string,
     productData: any
   ): IProductOms[] {
