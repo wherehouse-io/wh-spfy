@@ -53,8 +53,8 @@ export default class ShopifyService {
         shopCredentials = this.shopifyCredsCache[userId][shopType];
       } else {
         // call profile api to fetch shopify creds
-        const { UMS_STAGING_URL, UMS_AUTH_PARAM } = process.env;
-        const url = `${UMS_STAGING_URL}/ums/s2s/store-credentials?userId=${userId}&shopType=${shopType}`;
+        const { UMS_AUTH_URL, UMS_AUTH_PARAM } = process.env;
+        const url = `${UMS_AUTH_URL}/ums/s2s/store-credentials?userId=${userId}&shopType=${shopType}`;
 
         logger.info(`s2s call: [${url}]`);
 
@@ -94,7 +94,7 @@ export default class ShopifyService {
 
   static async getShopifyInstance(userId: string): Promise<Shopify> {
     const shopType = "shopify";
-    const UMS_STAGING_URL = process.env.UMS_STAGING_URL;
+    const UMS_AUTH_URL = process.env.UMS_AUTH_URL;
     const UMS_AUTH_PARAM = process.env.UMS_AUTH_PARAM;
     let shopCredentials;
 
@@ -106,7 +106,7 @@ export default class ShopifyService {
       shopCredentials = this.shopifyCredsCache[userId][shopType];
     } else {
       // call profile api to fetch shopify creds
-      const url = `${UMS_STAGING_URL}/ums/s2s/store-credentials?userId=${userId}&shopType=${shopType}`;
+      const url = `${UMS_AUTH_URL}/ums/s2s/store-credentials?userId=${userId}&shopType=${shopType}`;
 
       logger.info(`s2s call: [${url}]`);
 
