@@ -117,7 +117,7 @@ export default class FulfillmentService {
 
       const url = `${getShopifyBaseUrl(
         shopify,
-        "2022-10"
+        "2023-01"
       )}orders/${externalOrderId}/fulfillments.json`;
       logger.info(`Shopify call: [${url}]`);
 
@@ -144,7 +144,7 @@ export default class FulfillmentService {
       // await shopify.fulfillment.create(orderId, fulfillmentDetails);
 
       const url = `${getShopifyBaseUrl(
-        shopify
+        shopify,
       )}orders/${externalOrderId}/fulfillments.json`;
       logger.info(`Shopify call: [${url}]`);
 

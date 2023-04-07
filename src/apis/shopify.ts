@@ -425,7 +425,8 @@ export default class ShopifyService {
       // );
 
       const url = `${getShopifyBaseUrl(
-        shopify
+        shopify,
+        "2023-01"
       )}orders/${externalOrderId}/fulfillments/${
         wherehouseFulfillment.id
       }/cancel.json`;
@@ -453,7 +454,10 @@ export default class ShopifyService {
     try {
       // const shopifyOrderData = await shopify.order.get(Number(externalOrderId));
 
-      const url = `${getShopifyBaseUrl(shopify)}orders/${externalOrderId}.json`;
+      const url = `${getShopifyBaseUrl(
+        shopify,
+        "2023-01"
+      )}orders/${externalOrderId}.json`;
       logger.info(`Shopify call: [${url}]`);
 
       const { data } = await axios({
@@ -474,7 +478,7 @@ export default class ShopifyService {
     try {
       // return shopifyRef.location.list();
 
-      const url = `${getShopifyBaseUrl(shopify)}locations.json`;
+      const url = `${getShopifyBaseUrl(shopify, "2023-01")}locations.json`;
       logger.info(`Shopify call: [${url}]`);
 
       const { data } = await axios({
@@ -499,7 +503,8 @@ export default class ShopifyService {
       // return shopify.order.cancel(Number(externalOrderId));
 
       const url = `${getShopifyBaseUrl(
-        shopify
+        shopify,
+        "2023-01"
       )}orders/${externalOrderId}/cancel.json`;
       logger.info(`Shopify call: [${url}]`);
 
@@ -526,7 +531,8 @@ export default class ShopifyService {
       // const { variants } = await shopify.product.get(Number(productId));
 
       const url = `${getShopifyBaseUrl(
-        shopify
+        shopify,
+        "2023-01"
       )}products.json?limit=${limitNumber}`;
       logger.info(`Shopify call: [${url}]`);
 
@@ -548,7 +554,10 @@ export default class ShopifyService {
     try {
       // const { variants } = await shopify.product.get(Number(productId));
 
-      const url = `${getShopifyBaseUrl(shopify)}products/${productId}.json`;
+      const url = `${getShopifyBaseUrl(
+        shopify,
+        "2023-01"
+      )}products/${productId}.json`;
       logger.info(`Shopify call: [${url}]`);
 
       const { data } = await axios({
@@ -574,7 +583,8 @@ export default class ShopifyService {
       //   await shopify.inventoryItem.get(inventory_item_id);
 
       const url = `${getShopifyBaseUrl(
-        shopify
+        shopify,
+        "2023-01"
       )}inventory_items/${inventoryItemId}.json`;
       logger.info(`Shopify call: [${url}]`);
 
@@ -603,7 +613,8 @@ export default class ShopifyService {
       // );
 
       const url = `${getShopifyBaseUrl(
-        shopify
+        shopify,
+        "2023-01"
       )}orders/${externalOrderId}/transactions.json`;
       logger.info(`Shopify call: [${url}]`);
 
