@@ -143,8 +143,10 @@ export default class FulfillmentService {
     try {
       // await shopify.fulfillment.create(orderId, fulfillmentDetails);
 
+      //TODO: Need To check Payload
       const url = `${getShopifyBaseUrl(
         shopify,
+        "2023-01"
       )}orders/${externalOrderId}/fulfillments.json`;
       logger.info(`Shopify call: [${url}]`);
 
