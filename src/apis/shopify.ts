@@ -310,7 +310,7 @@ export default class ShopifyService {
     try {
       const shopify = await this.getShopifyUrlInstance(userId);
 
-      const createdTransactions = await this.createTransactionApi(
+      const createdTransactions = await this.createTransactionAtShopify(
         shopify,
         externalOrderId
       );
@@ -323,16 +323,6 @@ export default class ShopifyService {
     } catch (error: any) {
       logger.error(error);
     }
-  }
-
-  static async createTransactionAtShopify(
-    shopify: Shopify,
-    externalOrderId: string
-  ) {
-    return shopify.transaction.create(Number(externalOrderId), {
-      source: "external",
-      kind: "capture",
-    });
   }
 
   /**
@@ -427,7 +417,7 @@ export default class ShopifyService {
       //TODO: Need To Check URL: According TO Document Its (/admin/api/2023-01/fulfillments/1069020388/cancel.json)
       const url = `${getShopifyBaseUrl(
         shopify,
-        "2023-01"
+        // "2023-01"
       )}orders/${externalOrderId}/fulfillments/${
         wherehouseFulfillment.id
       }/cancel.json`;
@@ -603,7 +593,17 @@ export default class ShopifyService {
     }
   }
 
-  static async createTransactionApi(
+  // static async createTransactionAtShopify(
+  //   shopify: Shopify,
+  //   externalOrderId: string
+  // ) {
+  //   return shopify.transaction.create(Number(externalOrderId), {
+  //     source: "external",
+  //     kind: "capture",
+  //   });
+  // }
+
+  static async createTransactionAtShopify(
     shopify: ShopifyUrlInstance,
     externalOrderId: string
   ) {
@@ -613,13 +613,13 @@ export default class ShopifyService {
       //   externalOrderId
       // );
 
+      //TODO: Need to update version and check payload
       const url = `${getShopifyBaseUrl(
         shopify,
-        "2023-01"
+        // "2023-01"
       )}orders/${externalOrderId}/transactions.json`;
       logger.info(`Shopify call: [${url}]`);
 
-      //TODO: Need to check payload
       const { data } = await axios({
         method: "POST",
         url,

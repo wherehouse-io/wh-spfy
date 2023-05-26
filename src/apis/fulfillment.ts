@@ -16,18 +16,29 @@ export default class FulfillmentService {
     ShopifyUrlInstance: ShopifyUrlInstance
   ): Promise<unknown> {
     const orderId = _.get(fulfillmentDetails, "orderId");
+    const shouldApplyNewVersion = _.get(
+      fulfillmentDetails,
+      "shouldApplyNewVersion"
+    );
 
     try {
       delete fulfillmentDetails.orderId;
 
       // refer to https://shopify.dev/docs/admin-api/rest/reference/shipping-and-fulfillment/fulfillment#create-2021-01
-      await this.createFulfillmentApi(
+
+      if (!shouldApplyNewVersion) {
+        return this.createFulfillmentAtShopify(
+          ShopifyUrlInstance,
+          orderId,
+          fulfillmentDetails
+        );
+      }
+
+      return this.createFulfillmentAtShopifyUpdatedVersion(
         ShopifyUrlInstance,
         orderId,
         fulfillmentDetails
       );
-
-      return null;
     } catch (err: any) {
       logger.error(err);
       const message = _.get(err, "response.body.errors") || err.message;
@@ -135,7 +146,7 @@ export default class FulfillmentService {
     }
   }
 
-  static async createFulfillmentApi(
+  static async createFulfillmentAtShopify(
     shopify: ShopifyUrlInstance,
     externalOrderId: string,
     fulfillmentDetails: any
@@ -143,10 +154,8 @@ export default class FulfillmentService {
     try {
       // await shopify.fulfillment.create(orderId, fulfillmentDetails);
 
-      //TODO: Need To check Payload
       const url = `${getShopifyBaseUrl(
         shopify,
-        "2023-01"
       )}orders/${externalOrderId}/fulfillments.json`;
       logger.info(`Shopify call: [${url}]`);
 
@@ -168,6 +177,139 @@ export default class FulfillmentService {
       });
 
       return data.fulfillment;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  static async createFulfillmentAtShopifyUpdatedVersion(
+    shopify: ShopifyUrlInstance,
+    externalOrderId: string,
+    fulfillmentDetails: any
+  ) {
+    try {
+      // Getting Fulfillment Orders
+      const fulfillmentOrdersUrl = `${getShopifyBaseUrl(
+        shopify,
+        "2023-01"
+      )}orders/${externalOrderId}/fulfillment_orders.json`;
+      logger.info(
+        `Shopify call for fulfillment orders: [${fulfillmentOrdersUrl}]`
+      );
+      const { data: fulfillmentOrderData } = await axios({
+        method: "GET",
+        url: fulfillmentOrdersUrl,
+        headers: {
+          "Content-Type": " application/json",
+        },
+      });
+
+      if (
+        !(
+          fulfillmentOrderData?.fulfillment_orders?.length > 0
+        )
+      ) {
+        throw new Error('Fulfillment Order Is Not Found');
+      }
+
+      const updatedFulfillmentOrder: any = [];
+
+      //check for locationId mapping
+      for (const fulfillmentOrderItem of fulfillmentOrderData.fulfillment_orders) {
+        logger.info(
+          `!!!!!!!Started For Fulfillment Order!!!!!!!! ${fulfillmentOrderItem.id}`
+        );
+        const assignedLocationId = fulfillmentOrderItem.assigned_location_id;
+        const wherehouseAssignedLocationId = fulfillmentDetails.location_id;
+        logger.info(
+          `!!!!!!!!!!!assignedLocationId and wherehouseAssignedLocationId!!!!!!!!${assignedLocationId} and ${wherehouseAssignedLocationId}`
+        );
+
+        // if shopify assigned location id and our generated location id do not match then we have to move that fulfillment order to updated location id
+        if (wherehouseAssignedLocationId !== assignedLocationId) {
+          //move to the our generated location id
+          const moveLocationUrl = `${getShopifyBaseUrl(
+            shopify,
+            "2023-01"
+          )}fulfillment_orders/${fulfillmentOrderItem.id}/move.json`;
+          logger.info(`Shopify call for move location url: [${moveLocationUrl}]`);
+
+          const { data: moveLocationData } = await axios({
+             method: "POST",
+             url: moveLocationUrl,
+             data: JSON.stringify({
+               fulfillment_order: {
+                 new_location_id: wherehouseAssignedLocationId,
+               },
+             }),
+             headers: {
+               "Content-Type": " application/json",
+             },
+          });
+
+          // IF fulfillment order location is moved successFully then push it into updated fulfillment order array with updated location id
+          // If this fulfillment order location is not moved then will not be pushed so fulfillment twill not be created for that order 
+          if (!moveLocationData?.original_fulfillment_order) {
+            updatedFulfillmentOrder.push({
+              ...fulfillmentOrderItem,
+            });
+          } else {
+            updatedFulfillmentOrder.push({
+              ...fulfillmentOrderItem,
+              assigned_location_id: wherehouseAssignedLocationId,
+            });
+          }
+        } else {
+          updatedFulfillmentOrder.push({
+            ...fulfillmentOrderItem
+          })
+        }
+      }
+
+      // Create Fulfillment for each fulfillment order
+      const createdFulfillmentResponse: any = []
+      for (const updatedFulfillmentOrderItem of updatedFulfillmentOrder) {
+         const url = `${getShopifyBaseUrl(
+           shopify,
+           "2023-01"
+         )}/fulfillments.json`;
+          logger.info(`Shopify call create fulfillment: [${url}]`);
+          const fulfillmentObject = {
+            location_id: updatedFulfillmentOrderItem.assigned_location_id,
+            notify_customer: fulfillmentDetails.notify_customer,
+            tracking_info: {
+              number: fulfillmentDetails.tracking_number,
+              url: fulfillmentDetails.tracking_urls,
+              company: fulfillmentDetails.tracking_company,
+            },
+            line_items_by_fulfillment_order: [
+              {
+                fulfillment_order_id: updatedFulfillmentOrderItem.id,
+              },
+            ],
+          }
+
+        logger.info(
+          `!!!!!!!!!!fulfillmentObject!!!!!!! ${JSON.stringify(
+            fulfillmentObject, null, 2
+          )}`
+        );
+        
+         const { data } = await axios({
+           method: "POST",
+           url,
+           data: JSON.stringify({
+             fulfillment: fulfillmentObject,
+           }),
+           headers: {
+             "Content-Type": " application/json",
+           },
+         });
+
+        createdFulfillmentResponse.push(data);
+      }
+       
+      return createdFulfillmentResponse;
     } catch (e) {
       throw e;
     }
