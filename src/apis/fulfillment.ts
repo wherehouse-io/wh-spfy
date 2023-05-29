@@ -136,7 +136,7 @@ export default class FulfillmentService {
         method: "GET",
         url,
         headers: {
-          "Content-Type": " application/json",
+          "Content-Type": "application/json",
         },
       });
 
@@ -172,7 +172,7 @@ export default class FulfillmentService {
           },
         }),
         headers: {
-          "Content-Type": " application/json",
+          "Content-Type": "application/json",
         },
       });
 
@@ -188,11 +188,9 @@ export default class FulfillmentService {
     fulfillmentDetails: any
   ) {
     try {
+      const shopifyBaseURl = getShopifyBaseUrl(shopify, "2023-04");
       // Getting Fulfillment Orders
-      const fulfillmentOrdersUrl = `${getShopifyBaseUrl(
-        shopify,
-        "2023-01"
-      )}orders/${externalOrderId}/fulfillment_orders.json`;
+      const fulfillmentOrdersUrl = `${shopifyBaseURl}orders/${externalOrderId}/fulfillment_orders.json`;
       logger.info(
         `Shopify call for fulfillment orders: [${fulfillmentOrdersUrl}]`
       );
@@ -200,13 +198,13 @@ export default class FulfillmentService {
         method: "GET",
         url: fulfillmentOrdersUrl,
         headers: {
-          "Content-Type": " application/json",
+          "Content-Type": "application/json",
         },
       });
 
       if (
         !(
-          fulfillmentOrderData?.fulfillment_orders?.length > 0
+          fulfillmentOrderData?.fulfillment_orders?.length === 0
         )
       ) {
         throw new Error('Fulfillment Order Is Not Found');
@@ -228,10 +226,7 @@ export default class FulfillmentService {
         // if shopify assigned location id and our generated location id do not match then we have to move that fulfillment order to updated location id
         if (wherehouseAssignedLocationId !== assignedLocationId) {
           //move to the our generated location id
-          const moveLocationUrl = `${getShopifyBaseUrl(
-            shopify,
-            "2023-01"
-          )}fulfillment_orders/${fulfillmentOrderItem.id}/move.json`;
+          const moveLocationUrl = `${shopifyBaseURl}fulfillment_orders/${fulfillmentOrderItem.id}/move.json`;
           logger.info(`Shopify call for move location url: [${moveLocationUrl}]`);
 
           const { data: moveLocationData } = await axios({
@@ -243,22 +238,18 @@ export default class FulfillmentService {
                },
              }),
              headers: {
-               "Content-Type": " application/json",
+               "Content-Type": "application/json",
              },
           });
 
           // IF fulfillment order location is moved successFully then push it into updated fulfillment order array with updated location id
           // If this fulfillment order location is not moved then will not be pushed so fulfillment twill not be created for that order 
-          if (!moveLocationData?.original_fulfillment_order) {
-            updatedFulfillmentOrder.push({
-              ...fulfillmentOrderItem,
-            });
-          } else {
-            updatedFulfillmentOrder.push({
-              ...fulfillmentOrderItem,
-              assigned_location_id: wherehouseAssignedLocationId,
-            });
-          }
+          updatedFulfillmentOrder.push({
+            ...fulfillmentOrderItem,
+            assigned_location_id: !moveLocationData?.original_fulfillment_order
+              ? fulfillmentOrderItem.assigned_location_id
+              : wherehouseAssignedLocationId,
+          });
         } else {
           updatedFulfillmentOrder.push({
             ...fulfillmentOrderItem
@@ -269,10 +260,7 @@ export default class FulfillmentService {
       // Create Fulfillment for each fulfillment order
       const createdFulfillmentResponse: any = []
       for (const updatedFulfillmentOrderItem of updatedFulfillmentOrder) {
-         const url = `${getShopifyBaseUrl(
-           shopify,
-           "2023-01"
-         )}/fulfillments.json`;
+         const url = `${shopifyBaseURl}fulfillments.json`;
           logger.info(`Shopify call create fulfillment: [${url}]`);
           const fulfillmentObject = {
             location_id: updatedFulfillmentOrderItem.assigned_location_id,
@@ -302,7 +290,7 @@ export default class FulfillmentService {
              fulfillment: fulfillmentObject,
            }),
            headers: {
-             "Content-Type": " application/json",
+             "Content-Type": "application/json",
            },
          });
 
