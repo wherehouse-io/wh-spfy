@@ -310,7 +310,7 @@ export default class ShopifyService {
     try {
       const shopify = await this.getShopifyUrlInstance(userId);
 
-      const createdTransactions = await this.createTransactionApi(
+      const createdTransactions = await this.createTransactionAtShopify(
         shopify,
         externalOrderId
       );
@@ -323,16 +323,6 @@ export default class ShopifyService {
     } catch (error: any) {
       logger.error(error);
     }
-  }
-
-  static async createTransactionAtShopify(
-    shopify: Shopify,
-    externalOrderId: string
-  ) {
-    return shopify.transaction.create(Number(externalOrderId), {
-      source: "external",
-      kind: "capture",
-    });
   }
 
   /**
@@ -424,8 +414,10 @@ export default class ShopifyService {
       //   wherehouseFulfillment.id
       // );
 
+      //TODO: Need To Check URL: According TO Document Its (/admin/api/2023-01/fulfillments/1069020388/cancel.json)
       const url = `${getShopifyBaseUrl(
-        shopify
+        shopify,
+        // "2023-01"
       )}orders/${externalOrderId}/fulfillments/${
         wherehouseFulfillment.id
       }/cancel.json`;
@@ -453,7 +445,10 @@ export default class ShopifyService {
     try {
       // const shopifyOrderData = await shopify.order.get(Number(externalOrderId));
 
-      const url = `${getShopifyBaseUrl(shopify)}orders/${externalOrderId}.json`;
+      const url = `${getShopifyBaseUrl(
+        shopify,
+        "2023-01"
+      )}orders/${externalOrderId}.json`;
       logger.info(`Shopify call: [${url}]`);
 
       const { data } = await axios({
@@ -474,7 +469,7 @@ export default class ShopifyService {
     try {
       // return shopifyRef.location.list();
 
-      const url = `${getShopifyBaseUrl(shopify)}locations.json`;
+      const url = `${getShopifyBaseUrl(shopify, "2023-01")}locations.json`;
       logger.info(`Shopify call: [${url}]`);
 
       const { data } = await axios({
@@ -499,7 +494,8 @@ export default class ShopifyService {
       // return shopify.order.cancel(Number(externalOrderId));
 
       const url = `${getShopifyBaseUrl(
-        shopify
+        shopify,
+        "2023-01"
       )}orders/${externalOrderId}/cancel.json`;
       logger.info(`Shopify call: [${url}]`);
 
@@ -526,7 +522,8 @@ export default class ShopifyService {
       // const { variants } = await shopify.product.get(Number(productId));
 
       const url = `${getShopifyBaseUrl(
-        shopify
+        shopify,
+        "2023-01"
       )}products.json?limit=${limitNumber}`;
       logger.info(`Shopify call: [${url}]`);
 
@@ -548,7 +545,10 @@ export default class ShopifyService {
     try {
       // const { variants } = await shopify.product.get(Number(productId));
 
-      const url = `${getShopifyBaseUrl(shopify)}products/${productId}.json`;
+      const url = `${getShopifyBaseUrl(
+        shopify,
+        "2023-01"
+      )}products/${productId}.json`;
       logger.info(`Shopify call: [${url}]`);
 
       const { data } = await axios({
@@ -574,7 +574,8 @@ export default class ShopifyService {
       //   await shopify.inventoryItem.get(inventory_item_id);
 
       const url = `${getShopifyBaseUrl(
-        shopify
+        shopify,
+        "2023-01"
       )}inventory_items/${inventoryItemId}.json`;
       logger.info(`Shopify call: [${url}]`);
 
@@ -592,7 +593,17 @@ export default class ShopifyService {
     }
   }
 
-  static async createTransactionApi(
+  // static async createTransactionAtShopify(
+  //   shopify: Shopify,
+  //   externalOrderId: string
+  // ) {
+  //   return shopify.transaction.create(Number(externalOrderId), {
+  //     source: "external",
+  //     kind: "capture",
+  //   });
+  // }
+
+  static async createTransactionAtShopify(
     shopify: ShopifyUrlInstance,
     externalOrderId: string
   ) {
@@ -602,8 +613,10 @@ export default class ShopifyService {
       //   externalOrderId
       // );
 
+      //TODO: Need to update version and check payload
       const url = `${getShopifyBaseUrl(
-        shopify
+        shopify,
+        // "2023-01"
       )}orders/${externalOrderId}/transactions.json`;
       logger.info(`Shopify call: [${url}]`);
 

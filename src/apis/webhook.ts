@@ -16,7 +16,7 @@ export default class WebhookService {
           apiKey: key,
           password: secret,
         },
-        "2022-10"
+        "2023-01"
       )}webhooks.json`;
       const errorWebhooks: any = [];
       logger.info(
