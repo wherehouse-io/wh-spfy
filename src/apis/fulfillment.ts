@@ -23,7 +23,7 @@ export default class FulfillmentService {
    * @param shopify
    */
   static async createNewFulfillment(
-    fulfillmentDetails: IFulfillmentDetails,
+    fulfillmentDetails: any,
     ShopifyUrlInstance: ShopifyUrlInstance
   ): Promise<unknown> {
     logger.info(
