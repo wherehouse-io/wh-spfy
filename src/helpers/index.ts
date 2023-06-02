@@ -49,10 +49,10 @@ export const getShopifyBaseUrl = (
   version?: string
 ) => {
   if (version) {
-    return `https://${shopify.apiKey}:${shopify.password}@${shopify.shopName}/admin/api/${version}/`;
+    return `https://${shopify.apiKey}:${shopify.password}@${shopify.shopName}/admin/api/${version}`;
   }
 
-  return `https://${shopify.apiKey}:${shopify.password}@${shopify.shopName}/admin/api/2021-01/`;
+  return `https://${shopify.apiKey}:${shopify.password}@${shopify.shopName}/admin/api/2021-01`;
 };
 
 /**
