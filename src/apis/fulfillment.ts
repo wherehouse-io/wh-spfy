@@ -224,7 +224,7 @@ export default class FulfillmentService {
         },
       });
 
-      if (!(fulfillmentOrderData?.fulfillment_orders?.length === 0)) {
+      if (fulfillmentOrderData?.fulfillment_orders?.length === 0) {
         throw new Error("Fulfillment Order Is Not Found");
       }
 
