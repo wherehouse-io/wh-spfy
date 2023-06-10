@@ -287,7 +287,7 @@ export default class FulfillmentService {
           notify_customer: fulfillmentDetails.notify_customer,
           tracking_info: {
             number: fulfillmentDetails.tracking_number,
-            url: fulfillmentDetails.tracking_urls[0],
+            url: fulfillmentDetails.tracking_urls,
             company: fulfillmentDetails.tracking_company,
           },
           line_items_by_fulfillment_order: [
