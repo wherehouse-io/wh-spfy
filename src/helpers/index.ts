@@ -55,6 +55,12 @@ export const getShopifyBaseUrl = (
   return `https://${shopify.apiKey}:${shopify.password}@${shopify.shopName}/admin/api/2021-01`;
 };
 
+export const getShopifyOauthBaseUrl = (
+  shopify: ShopifyUrlInstance
+) => {
+  return `https://${shopify.apiKey}:${shopify.password}@${shopify.shopName}/admin/oauth`;
+};
+
 /**
  * Used to extract companyId from the request
  * @param {SHOP_TYPE} shopType
