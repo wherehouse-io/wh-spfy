@@ -7,7 +7,7 @@ import {
   ShopifyUrlInstance,
   SHOP_TYPE,
 } from "../types/shopify";
-import { asyncDelay, getShopifyBaseUrl } from "../helpers";
+import { asyncDelay, getShopifyBaseUrl, getShopifyOauthBaseUrl } from "../helpers";
 
 export default class ShopifyService {
   // maintain a local cache for shop api keys, password etc.
@@ -414,11 +414,14 @@ export default class ShopifyService {
       //   wherehouseFulfillment.id
       // );
 
-      //TODO: Need To Check URL: According TO Document Its (/admin/api/2023-01/fulfillments/1069020388/cancel.json)
-      const url = `${getShopifyBaseUrl(
-        shopify,
-        // "2023-01"
-      )}/orders/${externalOrderId}/fulfillments/${
+      // According to older version
+      // const url = `${getShopifyBaseUrl(
+      //   shopify
+      // )}/orders/${externalOrderId}/fulfillments/${
+      //   wherehouseFulfillment.id
+      // }/cancel.json`;
+
+      const url = `${getShopifyBaseUrl(shopify, "2023-04")}/fulfillments/${
         wherehouseFulfillment.id
       }/cancel.json`;
       logger.info(`Shopify call: [${url}]`);
@@ -447,7 +450,7 @@ export default class ShopifyService {
 
       const url = `${getShopifyBaseUrl(
         shopify,
-        "2023-01"
+        "2023-04"
       )}/orders/${externalOrderId}.json`;
       logger.info(`Shopify call: [${url}]`);
 
@@ -459,7 +462,14 @@ export default class ShopifyService {
         },
       });
 
-      return data.order;
+      return {
+        ...data.order,
+        gateway:
+          data.order.payment_gateway_names &&
+          data.order.payment_gateway_names.length > 0
+            ? data.order.payment_gateway_names[0]
+            : "",
+      };
     } catch (e) {
       throw e;
     }
@@ -469,7 +479,7 @@ export default class ShopifyService {
     try {
       // return shopifyRef.location.list();
 
-      const url = `${getShopifyBaseUrl(shopify, "2023-01")}/locations.json`;
+      const url = `${getShopifyBaseUrl(shopify, "2023-04")}/locations.json`;
       logger.info(`Shopify call: [${url}]`);
 
       const { data } = await axios({
@@ -495,7 +505,7 @@ export default class ShopifyService {
 
       const url = `${getShopifyBaseUrl(
         shopify,
-        "2023-01"
+        "2023-04"
       )}/orders/${externalOrderId}/cancel.json`;
       logger.info(`Shopify call: [${url}]`);
 
@@ -523,7 +533,7 @@ export default class ShopifyService {
 
       const url = `${getShopifyBaseUrl(
         shopify,
-        "2023-01"
+        "2023-04"
       )}/products.json?limit=${limitNumber}`;
       logger.info(`Shopify call: [${url}]`);
 
@@ -547,7 +557,7 @@ export default class ShopifyService {
 
       const url = `${getShopifyBaseUrl(
         shopify,
-        "2023-01"
+        "2023-04"
       )}/products/${productId}.json`;
       logger.info(`Shopify call: [${url}]`);
 
@@ -575,7 +585,7 @@ export default class ShopifyService {
 
       const url = `${getShopifyBaseUrl(
         shopify,
-        "2023-01"
+        "2023-04"
       )}/inventory_items/${inventoryItemId}.json`;
       logger.info(`Shopify call: [${url}]`);
 
@@ -588,6 +598,29 @@ export default class ShopifyService {
       });
 
       return data.inventory_item;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  static async getAccessScopeData(
+    shopify: ShopifyUrlInstance
+  ) {
+    try {
+      const url = `${getShopifyOauthBaseUrl(
+        shopify
+      )}/access_scopes.json`;
+      logger.info(`Shopify call: [${url}]`);
+
+      const { data } = await axios({
+        method: "GET",
+        url,
+        headers: {
+          "Content-Type": " application/json",
+        },
+      });
+
+      return data.access_scopes;
     } catch (e) {
       throw e;
     }
@@ -615,7 +648,7 @@ export default class ShopifyService {
 
       //TODO: Need to update version and check payload
       const url = `${getShopifyBaseUrl(
-        shopify,
+        shopify
         // "2023-01"
       )}/orders/${externalOrderId}/transactions.json`;
       logger.info(`Shopify call: [${url}]`);

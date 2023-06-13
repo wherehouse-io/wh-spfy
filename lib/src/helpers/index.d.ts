@@ -13,6 +13,7 @@ export declare const asyncDelay: (milliSeconds?: number) => Promise<null | Error
  */
 export declare const convertShopifyWeightToGrams: (weightUnit: SHOPIFY_WEIGHT_UNITS, weight: number) => number;
 export declare const getShopifyBaseUrl: (shopify: ShopifyUrlInstance, version?: string) => string;
+export declare const getShopifyOauthBaseUrl: (shopify: ShopifyUrlInstance) => string;
 /**
  * Used to extract companyId from the request
  * @param {SHOP_TYPE} shopType
