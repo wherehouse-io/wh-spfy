@@ -7,7 +7,7 @@ import {
   ShopifyUrlInstance,
   SHOP_TYPE,
 } from "../types/shopify";
-import { asyncDelay, getShopifyBaseUrl } from "../helpers";
+import { asyncDelay, getShopifyBaseUrl, getShopifyOauthBaseUrl } from "../helpers";
 
 export default class ShopifyService {
   // maintain a local cache for shop api keys, password etc.
@@ -53,8 +53,8 @@ export default class ShopifyService {
         shopCredentials = this.shopifyCredsCache[userId][shopType];
       } else {
         // call profile api to fetch shopify creds
-        const { UMS_STAGING_URL, UMS_AUTH_PARAM } = process.env;
-        const url = `${UMS_STAGING_URL}/ums/s2s/store-credentials?userId=${userId}&shopType=${shopType}`;
+        const { UMS_AUTH_URL, UMS_AUTH_PARAM } = process.env;
+        const url = `${UMS_AUTH_URL}/ums/s2s/store-credentials?userId=${userId}&shopType=${shopType}`;
 
         logger.info(`s2s call: [${url}]`);
 
@@ -94,7 +94,7 @@ export default class ShopifyService {
 
   static async getShopifyInstance(userId: string): Promise<Shopify> {
     const shopType = "shopify";
-    const UMS_STAGING_URL = process.env.UMS_STAGING_URL;
+    const UMS_AUTH_URL = process.env.UMS_AUTH_URL;
     const UMS_AUTH_PARAM = process.env.UMS_AUTH_PARAM;
     let shopCredentials;
 
@@ -106,7 +106,7 @@ export default class ShopifyService {
       shopCredentials = this.shopifyCredsCache[userId][shopType];
     } else {
       // call profile api to fetch shopify creds
-      const url = `${UMS_STAGING_URL}/ums/s2s/store-credentials?userId=${userId}&shopType=${shopType}`;
+      const url = `${UMS_AUTH_URL}/ums/s2s/store-credentials?userId=${userId}&shopType=${shopType}`;
 
       logger.info(`s2s call: [${url}]`);
 
@@ -310,7 +310,7 @@ export default class ShopifyService {
     try {
       const shopify = await this.getShopifyUrlInstance(userId);
 
-      const createdTransactions = await this.createTransactionApi(
+      const createdTransactions = await this.createTransactionAtShopify(
         shopify,
         externalOrderId
       );
@@ -323,16 +323,6 @@ export default class ShopifyService {
     } catch (error: any) {
       logger.error(error);
     }
-  }
-
-  static async createTransactionAtShopify(
-    shopify: Shopify,
-    externalOrderId: string
-  ) {
-    return shopify.transaction.create(Number(externalOrderId), {
-      source: "external",
-      kind: "capture",
-    });
   }
 
   /**
@@ -426,9 +416,14 @@ export default class ShopifyService {
       //   wherehouseFulfillment.id
       // );
 
-      const url = `${getShopifyBaseUrl(
-        shopify
-      )}orders/${externalOrderId}/fulfillments/${
+      // According to older version
+      // const url = `${getShopifyBaseUrl(
+      //   shopify
+      // )}/orders/${externalOrderId}/fulfillments/${
+      //   wherehouseFulfillment.id
+      // }/cancel.json`;
+
+      const url = `${getShopifyBaseUrl(shopify, "2023-04")}/fulfillments/${
         wherehouseFulfillment.id
       }/cancel.json`;
       logger.info(`Shopify call: [${url}]`);
@@ -455,7 +450,10 @@ export default class ShopifyService {
     try {
       // const shopifyOrderData = await shopify.order.get(Number(externalOrderId));
 
-      const url = `${getShopifyBaseUrl(shopify)}orders/${externalOrderId}.json`;
+      const url = `${getShopifyBaseUrl(
+        shopify,
+        "2023-04"
+      )}/orders/${externalOrderId}.json`;
       logger.info(`Shopify call: [${url}]`);
 
       const { data } = await axios({
@@ -466,7 +464,14 @@ export default class ShopifyService {
         },
       });
 
-      return data.order;
+      return {
+        ...data.order,
+        gateway:
+          data.order.payment_gateway_names &&
+          data.order.payment_gateway_names.length > 0
+            ? data.order.payment_gateway_names[0]
+            : "",
+      };
     } catch (e) {
       throw e;
     }
@@ -476,7 +481,7 @@ export default class ShopifyService {
     try {
       // return shopifyRef.location.list();
 
-      const url = `${getShopifyBaseUrl(shopify)}locations.json`;
+      const url = `${getShopifyBaseUrl(shopify, "2023-04")}/locations.json`;
       logger.info(`Shopify call: [${url}]`);
 
       const { data } = await axios({
@@ -501,8 +506,9 @@ export default class ShopifyService {
       // return shopify.order.cancel(Number(externalOrderId));
 
       const url = `${getShopifyBaseUrl(
-        shopify
-      )}orders/${externalOrderId}/cancel.json`;
+        shopify,
+        "2023-04"
+      )}/orders/${externalOrderId}/cancel.json`;
       logger.info(`Shopify call: [${url}]`);
 
       const { data } = await axios({
@@ -528,8 +534,9 @@ export default class ShopifyService {
       // const { variants } = await shopify.product.get(Number(productId));
 
       const url = `${getShopifyBaseUrl(
-        shopify
-      )}products.json?limit=${limitNumber}`;
+        shopify,
+        "2023-04"
+      )}/products.json?limit=${limitNumber}`;
       logger.info(`Shopify call: [${url}]`);
 
       const { data } = await axios({
@@ -548,9 +555,12 @@ export default class ShopifyService {
 
   static async getProductData(shopify: ShopifyUrlInstance, productId: string, fields?: string) {
     try {
-      const url = `${getShopifyBaseUrl(shopify)}products/${productId}.json${
-        fields ? `?fields=${fields}` : ""
-      }`;
+      // const { variants } = await shopify.product.get(Number(productId));
+
+      const url = `${getShopifyBaseUrl(
+        shopify,
+        "2023-04"
+      )}/products/${productId}.json${fields ? `?fields=${fields}` : ""}`;
 
       const { data } = await axios({
         method: "GET",
@@ -575,8 +585,9 @@ export default class ShopifyService {
       //   await shopify.inventoryItem.get(inventory_item_id);
 
       const url = `${getShopifyBaseUrl(
-        shopify
-      )}inventory_items/${inventoryItemId}.json`;
+        shopify,
+        "2023-04"
+      )}/inventory_items/${inventoryItemId}.json`;
       logger.info(`Shopify call: [${url}]`);
 
       const { data } = await axios({
@@ -593,7 +604,40 @@ export default class ShopifyService {
     }
   }
 
-  static async createTransactionApi(
+  static async getAccessScopeData(
+    shopify: ShopifyUrlInstance
+  ) {
+    try {
+      const url = `${getShopifyOauthBaseUrl(
+        shopify
+      )}/access_scopes.json`;
+      logger.info(`Shopify call: [${url}]`);
+
+      const { data } = await axios({
+        method: "GET",
+        url,
+        headers: {
+          "Content-Type": " application/json",
+        },
+      });
+
+      return data.access_scopes;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  // static async createTransactionAtShopify(
+  //   shopify: Shopify,
+  //   externalOrderId: string
+  // ) {
+  //   return shopify.transaction.create(Number(externalOrderId), {
+  //     source: "external",
+  //     kind: "capture",
+  //   });
+  // }
+
+  static async createTransactionAtShopify(
     shopify: ShopifyUrlInstance,
     externalOrderId: string
   ) {
@@ -603,9 +647,11 @@ export default class ShopifyService {
       //   externalOrderId
       // );
 
+      //TODO: Need to update version and check payload
       const url = `${getShopifyBaseUrl(
         shopify
-      )}orders/${externalOrderId}/transactions.json`;
+        // "2023-01"
+      )}/orders/${externalOrderId}/transactions.json`;
       logger.info(`Shopify call: [${url}]`);
 
       const { data } = await axios({

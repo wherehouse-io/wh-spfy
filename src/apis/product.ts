@@ -1,5 +1,10 @@
 import camelcaseKeys from "camelcase-keys";
-import { IProduct } from "../types/product";
+import {
+  EVENT_TYPE,
+  IProduct,
+  IProductDelete,
+  IProductOms,
+} from "../types/product";
 import {
   DEFAULT_PAGINATION_LIMIT_SHOPIFY_PRODUCT_LIST,
   PRODUCT_TYPE,
@@ -8,11 +13,92 @@ import {
   WEIGHT_UNIT,
   IAddress,
 } from "../types/product";
-import { convertShopifyWeightToGrams } from "../helpers";
+import {
+  convertShopifyWeightToGrams,
+  getCompanyId,
+  getWebhookId,
+} from "../helpers";
 import { ShopifyUrlInstance } from "../types/shopify";
 import ShopifyService from "./shopify";
 
 export default class ProductService {
+  public static shopType: SHOP_TYPE = SHOP_TYPE.SHOPIFY;
+
+  /**
+   * Used to extract Product Data from shopify webhook
+   * @param{IRequest} req
+   * @param{string} productId
+   * @param{EVENT_TYPE} eventType
+   * @return{IProduct}
+   */
+  public static extractProductDataForIngress(
+    req: any,
+    productId: string,
+    eventType: EVENT_TYPE,
+    productData?: any
+  ): IProduct[] | IProductDelete {
+    let body: any = {};
+    body = productData
+      ? camelcaseKeys(productData, { deep: true })
+      : camelcaseKeys(req.body, { deep: true });
+    if (eventType === EVENT_TYPE.DELETE) {
+      return {
+        productId: body?.id?.toString(),
+        eventType,
+        companyId: getCompanyId(this.shopType, req),
+        shopType: this.shopType,
+        webhookId: getWebhookId(this.shopType, req),
+      };
+    }
+    const products: IProduct[] = [];
+    const { variants, images, title, handle, status, productType } = body;
+    // TODO: add HSN code
+    variants.forEach((variant: any) => {
+      let variantItem: IProduct;
+      variantItem = {
+        _id: productId,
+        variantId: variant.id.toString(),
+        webhookId: productData
+          ? "add-script-webhook-id"
+          : getWebhookId(this.shopType, req),
+        eventType,
+        shopType: this.shopType,
+        companyId: productData
+          ? productData.companyId
+          : getCompanyId(this.shopType, req),
+        productTitle: title || "",
+        variantTitle: variant.title || "",
+        category: productType || "",
+        createdAt: new Date(variant.createdAt),
+        updatedAt: new Date(variant.updatedAt),
+        weight: convertShopifyWeightToGrams(
+          variant.weightUnit,
+          Number(variant.weight) || 0
+        ),
+        weightUnit: WEIGHT_UNIT.GRAM,
+        taxable: variant.taxable,
+        isActive: status === SHOPIFY_PRODUCT_STATUS.ACTIVE,
+        sku: variant.sku || "",
+        skuId: "",
+        productId: variant.productId.toString(),
+        price: Number(variant.price),
+        inventoryQuantity: Number(variant.inventoryQuantity) || 0,
+        barcode: variant.barcode || "",
+        handle,
+        imageUrls: variant.imageId
+          ? images
+              .filter((image: { id: any }) => image.id === variant.imageId)
+              .map((o: { src: any }) => o.src)
+          : [],
+        productType: PRODUCT_TYPE.VARIATION,
+        dimensions: {},
+      };
+      products.push(variantItem);
+    });
+
+    return products;
+  }
+
   /**
    *
    * Used to extract Product Data from shopify webhook which is used in ingress and need to move from local shopify service to public repo
@@ -21,15 +107,18 @@ export default class ProductService {
    * @return{IProduct}
    *
    */
-  static extractProductData(companyId: string, productData: any): IProduct[] {
+  static extractProductData(
+    companyId: string,
+    productData: any
+  ): IProductOms[] {
     let body: any = {};
     body = camelcaseKeys(productData, { deep: true });
 
-    const products: IProduct[] = [];
+    const products: IProductOms[] = [];
     const { variants, images, title, handle, status, productType } = body;
     // // TODO: add HSN code
     variants.forEach((variant: any) => {
-      let variantItem: IProduct;
+      let variantItem: IProductOms;
       variantItem = {
         variantId: variant.id.toString(),
         shopType: SHOP_TYPE.SHOPIFY,

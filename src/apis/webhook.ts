@@ -16,8 +16,8 @@ export default class WebhookService {
           apiKey: key,
           password: secret,
         },
-        "2022-10"
-      )}webhooks.json`;
+        "2023-04"
+      )}/webhooks.json`;
       const errorWebhooks: any = [];
       logger.info(
         `!!!!!Register Webhook started!!!!!! ${JSON.stringify(data, null, 2)}`

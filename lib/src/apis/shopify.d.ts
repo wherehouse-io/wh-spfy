@@ -34,7 +34,6 @@ export default class ShopifyService {
      * @param userId
      */
     static markCODOrderAsPaid(externalOrderId: string, userId: string): Promise<any>;
-    static createTransactionAtShopify(shopify: Shopify, externalOrderId: string): Promise<Shopify.ITransaction>;
     /**
      * figures out hsn code corresponding to variants of different shopify products
      * @param userId company id
@@ -50,5 +49,6 @@ export default class ShopifyService {
     static getAllProductList(shopify: ShopifyUrlInstance, limitNumber: number): Promise<any>;
     static getProductData(shopify: ShopifyUrlInstance, productId: string): Promise<any>;
     static getInventoryItemData(shopify: ShopifyUrlInstance, inventoryItemId: string): Promise<any>;
-    static createTransactionApi(shopify: ShopifyUrlInstance, externalOrderId: string): Promise<any>;
+    static getAccessScopeData(shopify: ShopifyUrlInstance): Promise<any>;
+    static createTransactionAtShopify(shopify: ShopifyUrlInstance, externalOrderId: string): Promise<any>;
 }

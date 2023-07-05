@@ -1,4 +1,14 @@
 import { ShopifyUrlInstance } from "../types/shopify";
+interface IFulfillmentDetails {
+    location_id: string;
+    orderId: string;
+    tracking_urls: any;
+    tracking_number: string;
+    status: string;
+    notify_customer: boolean;
+    tracking_company: string;
+    shouldApplyNewVersion: boolean;
+}
 export default class FulfillmentService {
     /**
      * @param {Object} fulfillmentDetails
@@ -23,5 +33,7 @@ export default class FulfillmentService {
         fulfilledBy?: string | undefined;
     }>;
     static getFulFillmentListDetails(shopify: ShopifyUrlInstance, externalOrderId: string): Promise<any>;
-    static createFulfillmentApi(shopify: ShopifyUrlInstance, externalOrderId: string, fulfillmentDetails: any): Promise<any>;
+    static createFulfillmentAtShopify(shopify: ShopifyUrlInstance, externalOrderId: string, fulfillmentDetails: IFulfillmentDetails): Promise<any>;
+    static createFulfillmentAtShopifyUpdatedVersion(shopify: ShopifyUrlInstance, externalOrderId: string, fulfillmentDetails: IFulfillmentDetails): Promise<any>;
 }
+export {};
