@@ -11,11 +11,9 @@ export const asyncDelay = async (
 ): Promise<null | Error> => {
   return new Promise((resolve, rej) => {
     try {
-      const now = new Date().getTime();
-      while (new Date().getTime() < now + milliSeconds) {
-        /* Do nothing */
-      }
-      resolve(null);
+      setTimeout(() => {
+        resolve(null);
+      }, milliSeconds);
     } catch (err) {
       rej(err);
     }

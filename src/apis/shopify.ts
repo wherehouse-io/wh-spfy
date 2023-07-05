@@ -355,17 +355,19 @@ export default class ShopifyService {
       for (const productId of productIds) {
         const { variants } = await this.getProductData(
           shopifyUrlInstance,
-          String(productId)
+          String(productId),
+          'variants'
         );
 
         const responseVariants: IHSNVariant[] = [];
 
         for (const variant of variants) {
+          logger.info(`delay invoked for ${variant.id}`);
+          await asyncDelay(500); // delay for half second to avoid 429(too many request) error from Shopify.
+          logger.info(`delay finished for ${variant.id}`);
+
           const { inventory_item_id } = variant;
           try {
-            logger.info(`delay invoked for ${variant.id}`);
-            await asyncDelay(500); // delay for half second to avoid 429(too many request) error from Shopify.
-            logger.info(`delay finished for ${variant.id}`);
 
             try {
               const { harmonized_system_code } =
@@ -544,18 +546,17 @@ export default class ShopifyService {
     }
   }
 
-  static async getProductData(shopify: ShopifyUrlInstance, productId: string) {
+  static async getProductData(shopify: ShopifyUrlInstance, productId: string, fields?: string) {
     try {
-      // const { variants } = await shopify.product.get(Number(productId));
-
-      const url = `${getShopifyBaseUrl(shopify)}products/${productId}.json`;
-      logger.info(`Shopify call: [${url}]`);
+      const url = `${getShopifyBaseUrl(shopify)}products/${productId}.json${
+        fields ? `?fields=${fields}` : ""
+      }`;
 
       const { data } = await axios({
         method: "GET",
         url,
         headers: {
-          "Content-Type": " application/json",
+          "Content-Type": "application/json",
         },
       });
 
