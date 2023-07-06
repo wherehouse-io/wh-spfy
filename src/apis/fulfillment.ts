@@ -180,18 +180,21 @@ export default class FulfillmentService {
       )}/orders/${externalOrderId}/fulfillments.json`;
       logger.info(`Shopify call: [${url}]`);
 
+      const payload = JSON.stringify({
+        fulfillment: {
+          location_id: fulfillmentDetails.location_id,
+          tracking_urls: fulfillmentDetails.tracking_urls,
+          tracking_number: fulfillmentDetails.tracking_number,
+          notify_customer: fulfillmentDetails.notify_customer,
+          tracking_company: fulfillmentDetails.tracking_company,
+        },
+      });
+      logger.info(payload);
+
       const { data } = await axios({
         method: "POST",
         url,
-        data: JSON.stringify({
-          fulfillment: {
-            location_id: fulfillmentDetails.location_id,
-            tracking_urls: fulfillmentDetails.tracking_urls,
-            tracking_number: fulfillmentDetails.tracking_number,
-            notify_customer: fulfillmentDetails.notify_customer,
-            tracking_company: fulfillmentDetails.tracking_company,
-          },
-        }),
+        data: payload,
         headers: {
           "Content-Type": "application/json",
         },
