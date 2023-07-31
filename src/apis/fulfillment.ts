@@ -34,26 +34,13 @@ export default class FulfillmentService {
       )}`
     );
     const orderId = fulfillmentDetails?.orderId;
-    const shouldApplyNewVersion = fulfillmentDetails?.shouldApplyNewVersion;
     logger.info(
-      `!!!!!!orderId and shouldApplyNewVersion!!!!!!! ${orderId} and ${shouldApplyNewVersion}`
+      `!!!!!!orderId and shouldApplyNewVersion!!!!!!! ${orderId}`
     );
 
     try {
       // delete fulfillmentDetails.orderId;
-
       // refer to https://shopify.dev/docs/admin-api/rest/reference/shipping-and-fulfillment/fulfillment#create-2021-01
-
-      if (!shouldApplyNewVersion) {
-        logger.info(
-          `!!!!!!!Fulfillment is creating using older method!!!!!!!!!`
-        );
-        return this.createFulfillmentAtShopify(
-          ShopifyUrlInstance,
-          orderId,
-          fulfillmentDetails
-        );
-      }
 
       logger.info(`!!!!!!!Fulfillment is creating using newer method!!!!!!!!!`);
       return this.createFulfillmentAtShopifyUpdatedVersion(
