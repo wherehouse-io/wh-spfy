@@ -210,7 +210,8 @@ export default class FulfillmentService {
       });
 
       if (fulfillmentOrderData?.fulfillment_orders?.length === 0) {
-        throw new Error("Fulfillment Order Is Not Found");
+        // throw new Error("Fulfillment Order Is Not Found");
+        throw new Error("Permission disabled for new fulfillment flow")
       }
 
       const updatedFulfillmentOrder: any = [];
