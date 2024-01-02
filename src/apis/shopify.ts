@@ -649,8 +649,8 @@ export default class ShopifyService {
 
       //TODO: Need to update version and check payload
       const url = `${getShopifyBaseUrl(
-        shopify
-        // "2023-01"
+        shopify,
+        "2023-10"
       )}/orders/${externalOrderId}/transactions.json`;
       logger.info(`Shopify call: [${url}]`);
 
