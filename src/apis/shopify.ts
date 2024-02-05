@@ -687,14 +687,6 @@ export default class ShopifyService {
     }
   }
 
-  //adjust inventory level of inventory item at a single location
-/*
-  /admin/api/2024-01/inventory_levels/adjust.json
-  await inventory_level.adjust({
-  body: {"location_id": 655441491, "inventory_item_id": 808950810, "available_adjustment": 5},
-});
-*/
-
 static async inventoryUpdateAtShopifyForRTO(shopify: ShopifyUrlInstance,
   inventoryUpdateObject: any
   ){
@@ -721,12 +713,8 @@ static async inventoryUpdateAtShopifyForRTO(shopify: ShopifyUrlInstance,
       logger.error(e);
       throw e;
     }
-
 }
 }
-
-
-
 // clean credentials cache after 7 days
 setTimeout(async () => {
   try {
