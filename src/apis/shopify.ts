@@ -528,15 +528,28 @@ export default class ShopifyService {
 
   static async getAllProductList(
     shopify: ShopifyUrlInstance,
-    limitNumber: number
+    limitNumber: number,
+    productIds?: string
   ) {
     try {
       // const { variants } = await shopify.product.get(Number(productId));
 
-      const url = `${getShopifyBaseUrl(
-        shopify,
-        "2023-04"
-      )}/products.json?limit=${limitNumber}`;
+      // let url='';
+      // if (productIds) {
+      //   url = `${getShopifyBaseUrl(
+      //     shopify,
+      //     "2024-01"
+      //   )}/products.json?ids=${productIds}&limit=${limitNumber}`;
+      // } else {
+      //   url = `${getShopifyBaseUrl(
+      //     shopify,
+      //     "2023-04"
+      //   )}/products.json?limit=${limitNumber}`;
+      // } 
+      const baseUrl : string = getShopifyBaseUrl(shopify, "2023-04");
+      const url = `${baseUrl}/products.json?limit=${limitNumber}${
+        productIds ? `&ids=${productIds}` : ""
+      }`;
       logger.info(`Shopify call: [${url}]`);
 
       const { data } = await axios({
@@ -673,7 +686,46 @@ export default class ShopifyService {
       throw e;
     }
   }
+
+  //adjust inventory level of inventory item at a single location
+/*
+  /admin/api/2024-01/inventory_levels/adjust.json
+  await inventory_level.adjust({
+  body: {"location_id": 655441491, "inventory_item_id": 808950810, "available_adjustment": 5},
+});
+*/
+
+static async inventoryUpdateAtShopifyForRTO(shopify: ShopifyUrlInstance,
+  inventoryUpdateObject: any
+  ){
+    try {
+      const url = `${getShopifyBaseUrl(
+        shopify,
+        "2024-01"
+      )}/inventory_levels/adjust.json`;
+
+      logger.info(`Shopify call: [${url}]`);
+      logger.info(`inventory udpate object: ${JSON.stringify(inventoryUpdateObject)}`);
+
+      const { data } = await axios({
+        method : "POST",
+        url,
+        data : JSON.stringify(inventoryUpdateObject),
+        headers : {
+          "Content-Type": "application/json",
+        },
+      });
+
+      return data.inventory_level;
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+
 }
+}
+
+
 
 // clean credentials cache after 7 days
 setTimeout(async () => {
