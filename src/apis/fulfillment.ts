@@ -221,6 +221,14 @@ export default class FulfillmentService {
         logger.info(
           `!!!!!!!Started For Fulfillment Order!!!!!!!! ${fulfillmentOrderItem.id}`
         );
+
+        if (fulfillmentOrderItem.status === "closed") {
+          logger.warn(
+            `skipping this fulfillment order(${fulfillmentOrderItem.id}) since status is closed!`
+          );
+          continue;
+        }
+
         const assignedLocationId = fulfillmentOrderItem.assigned_location_id;
         const wherehouseAssignedLocationId = fulfillmentDetails.location_id;
         logger.info(
