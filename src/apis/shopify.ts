@@ -7,7 +7,11 @@ import {
   ShopifyUrlInstance,
   SHOP_TYPE,
 } from "../types/shopify";
-import { asyncDelay, getShopifyBaseUrl, getShopifyOauthBaseUrl } from "../helpers";
+import {
+  asyncDelay,
+  getShopifyBaseUrl,
+  getShopifyOauthBaseUrl,
+} from "../helpers";
 
 export default class ShopifyService {
   // maintain a local cache for shop api keys, password etc.
@@ -346,10 +350,17 @@ export default class ShopifyService {
         const { variants } = await this.getProductData(
           shopifyUrlInstance,
           String(productId),
-          'variants'
+          "variants"
         );
 
         const responseVariants: IHSNVariant[] = [];
+
+        // since large number of variant causes excessive API calls to Shopify, eventually surpassing 2 req/s limit;
+        // we are Avoiding hsn assignment to products having variant more than a specified limit
+        const MAX_ALLOWED_SHOPIFY_VARIANT = 3;
+        if (variants.length > MAX_ALLOWED_SHOPIFY_VARIANT) {
+          continue;
+        }
 
         for (const variant of variants) {
           logger.info(`delay invoked for ${variant.id}`);
@@ -358,7 +369,6 @@ export default class ShopifyService {
 
           const { inventory_item_id } = variant;
           try {
-
             try {
               const { harmonized_system_code } =
                 await this.getInventoryItemData(
@@ -545,8 +555,8 @@ export default class ShopifyService {
       //     shopify,
       //     "2023-04"
       //   )}/products.json?limit=${limitNumber}`;
-      // } 
-      const baseUrl : string = getShopifyBaseUrl(shopify, "2023-04");
+      // }
+      const baseUrl: string = getShopifyBaseUrl(shopify, "2023-04");
       const url = `${baseUrl}/products.json?limit=${limitNumber}${
         productIds ? `&ids=${productIds}` : ""
       }`;
@@ -566,7 +576,11 @@ export default class ShopifyService {
     }
   }
 
-  static async getProductData(shopify: ShopifyUrlInstance, productId: string, fields?: string) {
+  static async getProductData(
+    shopify: ShopifyUrlInstance,
+    productId: string,
+    fields?: string
+  ) {
     try {
       // const { variants } = await shopify.product.get(Number(productId));
 
@@ -617,13 +631,9 @@ export default class ShopifyService {
     }
   }
 
-  static async getAccessScopeData(
-    shopify: ShopifyUrlInstance
-  ) {
+  static async getAccessScopeData(shopify: ShopifyUrlInstance) {
     try {
-      const url = `${getShopifyOauthBaseUrl(
-        shopify
-      )}/access_scopes.json`;
+      const url = `${getShopifyOauthBaseUrl(shopify)}/access_scopes.json`;
       logger.info(`Shopify call: [${url}]`);
 
       const { data } = await axios({
@@ -687,9 +697,10 @@ export default class ShopifyService {
     }
   }
 
-static async inventoryUpdateAtShopifyForRTO(shopify: ShopifyUrlInstance,
-  inventoryUpdateObject: any
-  ){
+  static async inventoryUpdateAtShopifyForRTO(
+    shopify: ShopifyUrlInstance,
+    inventoryUpdateObject: any
+  ) {
     try {
       const url = `${getShopifyBaseUrl(
         shopify,
@@ -697,13 +708,15 @@ static async inventoryUpdateAtShopifyForRTO(shopify: ShopifyUrlInstance,
       )}/inventory_levels/adjust.json`;
 
       logger.info(`Shopify call: [${url}]`);
-      logger.info(`inventory udpate object: ${JSON.stringify(inventoryUpdateObject)}`);
+      logger.info(
+        `inventory udpate object: ${JSON.stringify(inventoryUpdateObject)}`
+      );
 
       const { data } = await axios({
-        method : "POST",
+        method: "POST",
         url,
-        data : JSON.stringify(inventoryUpdateObject),
-        headers : {
+        data: JSON.stringify(inventoryUpdateObject),
+        headers: {
           "Content-Type": "application/json",
         },
       });
@@ -713,7 +726,7 @@ static async inventoryUpdateAtShopifyForRTO(shopify: ShopifyUrlInstance,
       logger.error(e);
       throw e;
     }
-}
+  }
 }
 // clean credentials cache after 7 days
 setTimeout(async () => {
