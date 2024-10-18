@@ -5,6 +5,15 @@ import ShopifyService from "./shopify";
 import { EShopifyFulfillmentStatus } from "../types/fulfillment";
 import { ShopifyUrlInstance } from "../types/shopify";
 import { getShopifyBaseUrl } from "../helpers";
+import {
+  GET_FULFILLMENT_LIST_COUNT_QUERY,
+  GET_FULFILLMENT_ORDER_QUERY,
+} from "./fulfillmentQueries";
+import {
+  CREATE_FULFILLMENT_MUTATION,
+  FULFILLMENT_MUTATION,
+  MOVE_ORDER_FULFILLMENT_LOCATION_MUTATION,
+} from "./fulfillmentMutations";
 
 interface IFulfillmentDetails {
   location_id: string;
@@ -81,7 +90,7 @@ export default class FulfillmentService {
       }
       return {
         fulfilled: true,
-        fulfilledBy: existingFulfillment[0].tracking_company,
+        fulfilledBy: existingFulfillment[0].trackingInfo[0].company,
       };
     }
     return { fulfilled: false };
@@ -130,21 +139,23 @@ export default class FulfillmentService {
   ) {
     try {
       // return shopify.fulfillment.list(Number(externalOrderId));
-      const url = `${getShopifyBaseUrl(
-        shopify,
-        "2023-04"
-      )}/orders/${externalOrderId}/fulfillments.json`;
+      const url = `${getShopifyBaseUrl(shopify, "2024-10")}/graphql.json`;
       logger.info(`Shopify call: [${url}]`);
-
+      const fulfillmentId = `gid://shopify/Order/${externalOrderId}`;
       const { data } = await axios({
-        method: "GET",
+        method: "POST",
         url,
         headers: {
           "Content-Type": "application/json",
+          "X-Shopify-Access-Token": shopify.password,
+        },
+        data: {
+          query: GET_FULFILLMENT_LIST_COUNT_QUERY,
+          variables: { fulfillmentId },
         },
       });
 
-      return data.fulfillments;
+      return data.order.fulfillments;
     } catch (e) {
       throw e;
     }
@@ -158,32 +169,34 @@ export default class FulfillmentService {
     try {
       // await shopify.fulfillment.create(orderId, fulfillmentDetails);
 
-      const url = `${getShopifyBaseUrl(
-        shopify
-      )}/orders/${externalOrderId}/fulfillments.json`;
+      const url = `${getShopifyBaseUrl(shopify, "2024-10")}/graphql.json`;
       logger.info(`Shopify call: [${url}]`);
-
-      const payload = JSON.stringify({
-        fulfillment: {
-          location_id: fulfillmentDetails.location_id,
-          tracking_urls: fulfillmentDetails.tracking_urls,
-          tracking_number: fulfillmentDetails.tracking_number,
-          notify_customer: fulfillmentDetails.notify_customer,
-          tracking_company: fulfillmentDetails.tracking_company,
-        },
-      });
-      logger.info(payload);
 
       const { data } = await axios({
         method: "POST",
         url,
-        data: payload,
+        data: {
+          query: FULFILLMENT_MUTATION,
+          variables: {
+            locationId: fulfillmentDetails.location_id,
+            trackingNumber: fulfillmentDetails.tracking_number,
+            trackingUrl: fulfillmentDetails.tracking_urls,
+            trackingCompany: fulfillmentDetails.tracking_company,
+            notifyCustomer: fulfillmentDetails.notify_customer,
+            fulfillmentOrderId: externalOrderId,
+          },
+        },
         headers: {
           "Content-Type": "application/json",
+          "X-Shopify-Access-Token": shopify.password,
         },
       });
 
-      return data.fulfillment;
+      if (data.errors) {
+        throw new Error(`GraphQL errors: ${JSON.stringify(data.errors)}`);
+      }
+
+      return data.data.fulfillmentCreate.fulfillment;
     } catch (e) {
       throw e;
     }
@@ -195,41 +208,46 @@ export default class FulfillmentService {
     fulfillmentDetails: IFulfillmentDetails
   ) {
     try {
-      const shopifyBaseURl = getShopifyBaseUrl(shopify, "2023-04");
+      const shopifyBaseURl = getShopifyBaseUrl(shopify, "2024-10");
       // Getting Fulfillment Orders
-      const fulfillmentOrdersUrl = `${shopifyBaseURl}/orders/${externalOrderId}/fulfillment_orders.json`;
-      logger.info(
-        `Shopify call for fulfillment orders: [${fulfillmentOrdersUrl}]`
-      );
+      const url = `${shopifyBaseURl}/graphql.json`;
+
+      logger.info(`Shopify call for fulfillment orders: [${url}]`);
+      const getFulfillmentOrderId = `gid://shopify/Order/${externalOrderId}`;
       const { data: fulfillmentOrderData } = await axios({
-        method: "GET",
-        url: fulfillmentOrdersUrl,
+        method: "POST",
+        url: url,
         headers: {
           "Content-Type": "application/json",
+          "X-Shopify-Access-Token": shopify.password,
+        },
+        data: {
+          query: GET_FULFILLMENT_ORDER_QUERY,
+          variables: { getFulfillmentOrderId },
         },
       });
 
-      if (fulfillmentOrderData?.fulfillment_orders?.length === 0) {
+      if (!fulfillmentOrderData.data.order.fulfillmentOrders.nodes.length) {
         // throw new Error("Fulfillment Order Is Not Found");
-        throw new Error("Permission disabled for new fulfillment flow")
+        throw new Error("Permission disabled for new fulfillment flow");
       }
 
       const updatedFulfillmentOrder: any = [];
 
       //check for locationId mapping
-      for (const fulfillmentOrderItem of fulfillmentOrderData.fulfillment_orders) {
-        logger.info(
-          `!!!!!!!Started For Fulfillment Order!!!!!!!! ${fulfillmentOrderItem.id}`
-        );
+      for (const fulfillmentOrderItem of fulfillmentOrderData.data.order
+        .fulfillmentOrders.nodes) {
+        const node = fulfillmentOrderItem.node;
+        logger.info(`!!!!!!!Started For Fulfillment Order!!!!!!!! ${node.id}`);
 
         if (fulfillmentOrderItem.status === "closed") {
           logger.warn(
-            `skipping this fulfillment order(${fulfillmentOrderItem.id}) since status is closed!`
+            `skipping this fulfillment order(${node.id}) since status is closed!`
           );
           continue;
         }
 
-        const assignedLocationId = fulfillmentOrderItem.assigned_location_id;
+        const assignedLocationId = node.assignedLocation.location.id;
         const wherehouseAssignedLocationId = fulfillmentDetails.location_id;
         logger.info(
           `!!!!!!!!!!!assignedLocationId and wherehouseAssignedLocationId!!!!!!!!${assignedLocationId} and ${wherehouseAssignedLocationId}`
@@ -238,75 +256,59 @@ export default class FulfillmentService {
         // if shopify assigned location id and our generated location id do not match then we have to move that fulfillment order to updated location id
         if (wherehouseAssignedLocationId !== assignedLocationId) {
           //move to the our generated location id
-          const moveLocationUrl = `${shopifyBaseURl}/fulfillment_orders/${fulfillmentOrderItem.id}/move.json`;
-          logger.info(
-            `Shopify call for move location url: [${moveLocationUrl}]`
-          );
 
           const { data: moveLocationData } = await axios({
             method: "POST",
-            url: moveLocationUrl,
-            data: JSON.stringify({
-              fulfillment_order: {
-                new_location_id: wherehouseAssignedLocationId,
-              },
-            }),
+            url: url,
             headers: {
               "Content-Type": "application/json",
+              "X-Shopify-Access-Token": shopify.password,
+            },
+            data: {
+              query: MOVE_ORDER_FULFILLMENT_LOCATION_MUTATION,
+              variables: { id: node.id, wherehouseAssignedLocationId },
             },
           });
 
           // IF fulfillment order location is moved successFully then push it into updated fulfillment order array with updated location id
           // If this fulfillment order location is not moved then will not be pushed so fulfillment twill not be created for that order
-          updatedFulfillmentOrder.push({
-            ...fulfillmentOrderItem,
-            assigned_location_id: !moveLocationData?.original_fulfillment_order
-              ? fulfillmentOrderItem.assigned_location_id
-              : wherehouseAssignedLocationId,
-          });
+          const movedOrder =
+            moveLocationData.data.fulfillmentOrderMove.movedFulfillmentOrder;
+          if (movedOrder) {
+            updatedFulfillmentOrder.push({
+              ...node,
+              assigned_location_id: wherehouseAssignedLocationId,
+            });
+          } else {
+            updatedFulfillmentOrder.push(node);
+          }
         } else {
-          updatedFulfillmentOrder.push({
-            ...fulfillmentOrderItem,
-          });
+          updatedFulfillmentOrder.push(node);
         }
       }
 
       // Create Fulfillment for each fulfillment order
       const createdFulfillmentResponse: any = [];
       for (const updatedFulfillmentOrderItem of updatedFulfillmentOrder) {
-        const url = `${shopifyBaseURl}/fulfillments.json`;
         logger.info(`Shopify call create fulfillment: [${url}]`);
-        const fulfillmentObject = {
-          location_id: updatedFulfillmentOrderItem.assigned_location_id,
-          notify_customer: fulfillmentDetails.notify_customer,
-          tracking_info: {
-            number: fulfillmentDetails.tracking_number,
-            url: fulfillmentDetails.tracking_urls[0],
-            company: fulfillmentDetails.tracking_company,
-          },
-          line_items_by_fulfillment_order: [
-            {
-              fulfillment_order_id: updatedFulfillmentOrderItem.id,
-            },
-          ],
-        };
-
-        logger.info(
-          `!!!!!!!!!!fulfillmentObject!!!!!!! ${JSON.stringify(
-            fulfillmentObject,
-            null,
-            2
-          )}`
-        );
 
         const { data } = await axios({
           method: "POST",
           url,
-          data: JSON.stringify({
-            fulfillment: fulfillmentObject,
-          }),
+          data: {
+            query: CREATE_FULFILLMENT_MUTATION,
+            variables: {
+              locationId: updatedFulfillmentOrderItem.assigned_location_id,
+              trackingNumber: fulfillmentDetails.tracking_number,
+              trackingUrl: fulfillmentDetails.tracking_urls[0],
+              trackingCompany: fulfillmentDetails.tracking_company,
+              notifyCustomer: fulfillmentDetails.notify_customer,
+              fulfillmentOrderId: updatedFulfillmentOrderItem.id,
+            },
+          },
           headers: {
             "Content-Type": "application/json",
+            "X-Shopify-Access-Token": shopify.password,
           },
         });
 

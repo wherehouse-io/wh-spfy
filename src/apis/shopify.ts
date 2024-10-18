@@ -12,6 +12,21 @@ import {
   getShopifyBaseUrl,
   getShopifyOauthBaseUrl,
 } from "../helpers";
+import {
+  CANCEL_FULFILLMENT,
+  CANCEL_ORDER,
+  CREATE_TRANSACTION,
+  INVENTORY_UPDATE,
+} from "./shopifyMutations";
+import {
+  GET_ACCESS_SCOPE_DATA,
+  GET_ALL_PRODUCTS,
+  GET_INVENTORY_ITEM_DATA,
+  GET_LOCATION_DATA,
+  GET_ORDER_DATA,
+  GET_PRODUCT_DATA,
+} from "./shopifyQueries";
+
 
 export default class ShopifyService {
   // maintain a local cache for shop api keys, password etc.
@@ -358,32 +373,32 @@ export default class ShopifyService {
         // since large number of variant causes excessive API calls to Shopify, eventually surpassing 2 req/s limit;
         // we are Avoiding hsn assignment to products having variant more than a specified limit
         const MAX_ALLOWED_SHOPIFY_VARIANT = 3;
-        if (variants.length > MAX_ALLOWED_SHOPIFY_VARIANT) {
+        if (variants.nodes.length > MAX_ALLOWED_SHOPIFY_VARIANT) {
           continue;
         }
 
-        for (const variant of variants) {
+        for (const variant of variants.nodes) {
           logger.info(`delay invoked for ${variant.id}`);
           await asyncDelay(500); // delay for half second to avoid 429(too many request) error from Shopify.
           logger.info(`delay finished for ${variant.id}`);
 
-          const { inventory_item_id } = variant;
+          const { inventoryItem } = variant;
           try {
             try {
-              const { harmonized_system_code } =
+              const { harmonizedSystemCode } =
                 await this.getInventoryItemData(
                   shopifyUrlInstance,
-                  String(inventory_item_id)
+                  String(inventoryItem.id)
                 );
 
               responseVariants.push({
                 id: String(variant.id),
-                hsn: harmonized_system_code
-                  ? String(harmonized_system_code)
+                hsn: harmonizedSystemCode
+                  ? String(harmonizedSystemCode)
                   : "", // do not parse directy with String(), null also gets strigified :X
               });
               logger.info(
-                `HSN - ${productId} - ${variant.id} - ${harmonized_system_code}`
+                `HSN - ${productId} - ${variant.id} - ${harmonizedSystemCode}`
               );
             } catch (error) {
               logger.error(
@@ -421,6 +436,7 @@ export default class ShopifyService {
     wherehouseFulfillment: IOrderFulfillment
   ) {
     try {
+      const url = `${getShopifyBaseUrl(shopify, "2024-10")}/graphql.json`;
       // return shopify.fulfillment.cancel(
       //   Number(externalOrderId),
       //   wherehouseFulfillment.id
@@ -433,21 +449,24 @@ export default class ShopifyService {
       //   wherehouseFulfillment.id
       // }/cancel.json`;
 
-      const url = `${getShopifyBaseUrl(shopify, "2023-04")}/fulfillments/${
-        wherehouseFulfillment.id
-      }/cancel.json`;
+      const fulfillmentId = wherehouseFulfillment.id;
+
       logger.info(`Shopify call: [${url}]`);
 
       const { data } = await axios({
         method: "POST",
         url,
-        data: JSON.stringify({}),
+        data: {
+          query: CANCEL_FULFILLMENT,
+          variables: { fulfillmentId },
+        },
         headers: {
           "Content-Type": " application/json",
+          "X-Shopify-Access-Token": shopify.password,
         },
       });
 
-      return data.fulfillment;
+      return data.data.fulfillmentCancel.fulfillment;
     } catch (e) {
       throw e;
     }
@@ -459,27 +478,29 @@ export default class ShopifyService {
   ) {
     try {
       // const shopifyOrderData = await shopify.order.get(Number(externalOrderId));
-
-      const url = `${getShopifyBaseUrl(
-        shopify,
-        "2023-04"
-      )}/orders/${externalOrderId}.json`;
+      const url = `${getShopifyBaseUrl(shopify, "2024-10")}/graphql.json`;
       logger.info(`Shopify call: [${url}]`);
 
+      const getOrderId = `gid://shopify/Order/${externalOrderId}`;
       const { data } = await axios({
-        method: "GET",
+        method: "POST",
         url,
         headers: {
           "Content-Type": " application/json",
+          "X-Shopify-Access-Token": shopify.password,
+        },
+        data: {
+          query: GET_ORDER_DATA,
+          variables: { getOrderId },
         },
       });
 
       return {
-        ...data.order,
+        ...data.data.order,
         gateway:
-          data.order.payment_gateway_names &&
-          data.order.payment_gateway_names.length > 0
-            ? data.order.payment_gateway_names[0]
+          data.data.order.paymentGatewayNames &&
+          data.data.order.paymentGatewayNames.length > 0
+            ? data.data.order.paymentGatewayNames[0]
             : "",
       };
     } catch (e) {
@@ -490,19 +511,23 @@ export default class ShopifyService {
   static async getLocationData(shopify: ShopifyUrlInstance) {
     try {
       // return shopifyRef.location.list();
-
-      const url = `${getShopifyBaseUrl(shopify, "2023-04")}/locations.json`;
+     // locations
+      const url = `${getShopifyBaseUrl(shopify, "2024-10")}/graph.json`;
       logger.info(`Shopify call: [${url}]`);
 
       const { data } = await axios({
-        method: "GET",
+        method: "POST",
         url,
         headers: {
           "Content-Type": " application/json",
+          "X-Shopify-Access-Token": shopify.password,
+        },
+        data: {
+          query: GET_LOCATION_DATA,
         },
       });
 
-      return data.locations;
+      return data.data.locations;
     } catch (e) {
       throw e;
     }
@@ -514,23 +539,26 @@ export default class ShopifyService {
   ) {
     try {
       // return shopify.order.cancel(Number(externalOrderId));
-
-      const url = `${getShopifyBaseUrl(
-        shopify,
-        "2023-04"
-      )}/orders/${externalOrderId}/cancel.json`;
+     // orders/${externalOrderId}/cancel
+      const url = `${getShopifyBaseUrl(shopify, "2024-10")}/graphql.json`;
       logger.info(`Shopify call: [${url}]`);
+
+      const cancelOrderId = `gid://shopify/Order/${externalOrderId}`;
 
       const { data } = await axios({
         method: "POST",
         url,
-        data: JSON.stringify({}),
         headers: {
           "Content-Type": " application/json",
+          "X-Shopify-Access-Token": shopify.password,
+        },
+        data: {
+          query: CANCEL_ORDER,
+          variables: { cancelOrderId },
         },
       });
 
-      return data.order;
+      return data.data.order;
     } catch (e) {
       throw e;
     }
@@ -556,21 +584,24 @@ export default class ShopifyService {
       //     "2023-04"
       //   )}/products.json?limit=${limitNumber}`;
       // }
-      const baseUrl: string = getShopifyBaseUrl(shopify, "2023-04");
-      const url = `${baseUrl}/products.json?limit=${limitNumber}${
-        productIds ? `&ids=${productIds}` : ""
-      }`;
+      const baseUrl: string = getShopifyBaseUrl(shopify, "2024-10");
+      const url = `${baseUrl}/graphql.json`;
       logger.info(`Shopify call: [${url}]`);
 
       const { data } = await axios({
-        method: "GET",
+        method: "POST",
         url,
         headers: {
           "Content-Type": " application/json",
+          "X-Shopify-Access-Token": shopify.password,
+        },
+        data: {
+          query: GET_ALL_PRODUCTS,
+          variables: { limit: limitNumber, ids: productIds },
         },
       });
 
-      return data.products;
+      return data.data.products;
     } catch (e) {
       throw e;
     }
@@ -584,20 +615,21 @@ export default class ShopifyService {
     try {
       // const { variants } = await shopify.product.get(Number(productId));
 
-      const url = `${getShopifyBaseUrl(
-        shopify,
-        "2023-04"
-      )}/products/${productId}.json${fields ? `?fields=${fields}` : ""}`;
-
+      const url = `${getShopifyBaseUrl(shopify, "2024-10")}/graphql.json`;
+      const productID = `gid://shopify/Product/${productId}`;
       const { data } = await axios({
         method: "GET",
         url,
         headers: {
           "Content-Type": "application/json",
+          "X-Shopify-Access-Token": shopify.password,
+        },
+        data: {
+          query: GET_PRODUCT_DATA,
+          variables: { productID, fields },
         },
       });
-
-      return data.product;
+      return data.data.product;
     } catch (e) {
       throw e;
     }
@@ -611,21 +643,23 @@ export default class ShopifyService {
       // const { harmonized_system_code } =
       //   await shopify.inventoryItem.get(inventory_item_id);
 
-      const url = `${getShopifyBaseUrl(
-        shopify,
-        "2023-04"
-      )}/inventory_items/${inventoryItemId}.json`;
+      const url = `${getShopifyBaseUrl(shopify, "2024-10")}/graphql.json`;
       logger.info(`Shopify call: [${url}]`);
-
+      const InventoryItemID = `gid://shopify/InventoryItem/${inventoryItemId}`;
       const { data } = await axios({
-        method: "GET",
+        method: "POST",
         url,
         headers: {
           "Content-Type": " application/json",
+          "X-Shopify-Access-Token": shopify.password,
+        },
+        data: {
+          query: GET_INVENTORY_ITEM_DATA,
+          variables: { InventoryItemID },
         },
       });
 
-      return data.inventory_item;
+      return data.data.inventoryItem;
     } catch (e) {
       throw e;
     }
@@ -633,18 +667,23 @@ export default class ShopifyService {
 
   static async getAccessScopeData(shopify: ShopifyUrlInstance) {
     try {
-      const url = `${getShopifyOauthBaseUrl(shopify)}/access_scopes.json`;
+      // access_scopes
+      const url = `${getShopifyBaseUrl(shopify, "2024-10")}/graphql.json`;
       logger.info(`Shopify call: [${url}]`);
 
       const { data } = await axios({
-        method: "GET",
+        method: "POST",
         url,
         headers: {
           "Content-Type": " application/json",
+          "X-Shopify-Access-Token": shopify.password,
+        },
+        data: {
+          query: GET_ACCESS_SCOPE_DATA,
         },
       });
 
-      return data.access_scopes;
+      return data.data.currentAppInstallation.accessScopes;
     } catch (e) {
       throw e;
     }
@@ -671,27 +710,25 @@ export default class ShopifyService {
       // );
 
       //TODO: Need to update version and check payload
-      const url = `${getShopifyBaseUrl(
-        shopify,
-        "2023-10"
-      )}/orders/${externalOrderId}/transactions.json`;
+
+      // orders/${externalOrderId}/transactions.json
+      const url = `${getShopifyBaseUrl(shopify, "2024-10")}/graphql.json`;
       logger.info(`Shopify call: [${url}]`);
 
       const { data } = await axios({
         method: "POST",
         url,
-        data: JSON.stringify({
-          transaction: {
-            source: "external",
-            kind: "capture",
-          },
-        }),
+        data: {
+          query: CREATE_TRANSACTION,
+          variables: { externalOrderId },
+        },
         headers: {
           "Content-Type": " application/json",
+          "X-Shopify-Access-Token": shopify.password,
         },
       });
 
-      return data.transaction;
+      return data.data.transaction;
     } catch (e) {
       throw e;
     }
@@ -702,10 +739,8 @@ export default class ShopifyService {
     inventoryUpdateObject: any
   ) {
     try {
-      const url = `${getShopifyBaseUrl(
-        shopify,
-        "2024-01"
-      )}/inventory_levels/adjust.json`;
+      // inventory_levels/adjust
+      const url = `${getShopifyBaseUrl(shopify, "2024-01")}/graphql.json`;
 
       logger.info(`Shopify call: [${url}]`);
       logger.info(
@@ -715,13 +750,17 @@ export default class ShopifyService {
       const { data } = await axios({
         method: "POST",
         url,
-        data: JSON.stringify(inventoryUpdateObject),
+        data: {
+          query: INVENTORY_UPDATE,
+          variables: { inventoryUpdate: inventoryUpdateObject },
+        },
         headers: {
           "Content-Type": "application/json",
+          "X-Shopify-Access-Token": shopify.password,
         },
       });
 
-      return data.inventory_level;
+      return data.data.inventoryLevel;
     } catch (e) {
       logger.error(e);
       throw e;
