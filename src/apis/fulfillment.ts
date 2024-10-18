@@ -237,17 +237,19 @@ export default class FulfillmentService {
       //check for locationId mapping
       for (const fulfillmentOrderItem of fulfillmentOrderData.data.order
         .fulfillmentOrders.nodes) {
-        const node = fulfillmentOrderItem.node;
-        logger.info(`!!!!!!!Started For Fulfillment Order!!!!!!!! ${node.id}`);
+        logger.info(
+          `!!!!!!!Started For Fulfillment Order!!!!!!!! ${fulfillmentOrderItem.id}`
+        );
 
         if (fulfillmentOrderItem.status === "closed") {
           logger.warn(
-            `skipping this fulfillment order(${node.id}) since status is closed!`
+            `skipping this fulfillment order(${fulfillmentOrderItem.id}) since status is closed!`
           );
           continue;
         }
 
-        const assignedLocationId = node.assignedLocation.location.id;
+        const assignedLocationId =
+          fulfillmentOrderItem.assignedLocation.location.id;
         const wherehouseAssignedLocationId = fulfillmentDetails.location_id;
         logger.info(
           `!!!!!!!!!!!assignedLocationId and wherehouseAssignedLocationId!!!!!!!!${assignedLocationId} and ${wherehouseAssignedLocationId}`
@@ -266,7 +268,10 @@ export default class FulfillmentService {
             },
             data: {
               query: MOVE_ORDER_FULFILLMENT_LOCATION_MUTATION,
-              variables: { id: node.id, wherehouseAssignedLocationId },
+              variables: {
+                id: fulfillmentOrderItem.id,
+                wherehouseAssignedLocationId,
+              },
             },
           });
 
@@ -276,14 +281,14 @@ export default class FulfillmentService {
             moveLocationData.data.fulfillmentOrderMove.movedFulfillmentOrder;
           if (movedOrder) {
             updatedFulfillmentOrder.push({
-              ...node,
+              ...fulfillmentOrderItem,
               assigned_location_id: wherehouseAssignedLocationId,
             });
           } else {
-            updatedFulfillmentOrder.push(node);
+            updatedFulfillmentOrder.push(fulfillmentOrderItem);
           }
         } else {
-          updatedFulfillmentOrder.push(node);
+          updatedFulfillmentOrder.push(fulfillmentOrderItem);
         }
       }
 
