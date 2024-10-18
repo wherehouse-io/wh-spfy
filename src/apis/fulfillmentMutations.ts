@@ -43,12 +43,12 @@ export const CREATE_FULFILLMENT_MUTATION = `mutation createFulfillment($location
 export const FULFILLMENT_MUTATION = `mutation createFulfillment(
     $locationId: ID!, 
     $trackingNumber: String!, 
-    $trackingUrl: String!, 
+    $trackingUrl: [String!]!, 
     $trackingCompany: String!, 
     $notifyCustomer: Boolean!, 
     $fulfillmentOrderId: ID!
   ) {
-    fulfillmentCreate(fulfillment: {
+    fulfillmentCreateV2(fulfillment: {
       locationId: $locationId,
       trackingInfo: {
         number: $trackingNumber,
