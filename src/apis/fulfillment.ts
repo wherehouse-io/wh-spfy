@@ -11,7 +11,7 @@ import {
 } from "./fulfillmentQueries";
 import {
   CREATE_FULFILLMENT_MUTATION,
-  FULFILLMENT_MUTATION,
+  FULFILLMENT_MUTATION_WITH_MULTIPLE_TRACKING_URLS,
   MOVE_ORDER_FULFILLMENT_LOCATION_MUTATION,
 } from "./fulfillmentMutations";
 
@@ -176,11 +176,10 @@ export default class FulfillmentService {
         method: "POST",
         url,
         data: {
-          query: FULFILLMENT_MUTATION,
+          query: FULFILLMENT_MUTATION_WITH_MULTIPLE_TRACKING_URLS,
           variables: {
-            locationId: fulfillmentDetails.location_id,
             trackingNumber: fulfillmentDetails.tracking_number,
-            trackingUrl: fulfillmentDetails.tracking_urls,
+            trackingUrls: fulfillmentDetails.tracking_urls,
             trackingCompany: fulfillmentDetails.tracking_company,
             notifyCustomer: fulfillmentDetails.notify_customer,
             fulfillmentOrderId: externalOrderId,

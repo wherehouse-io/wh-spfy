@@ -40,35 +40,35 @@ export const CREATE_FULFILLMENT_MUTATION = `mutation createFulfillment($location
   }
 }`;
 
-export const FULFILLMENT_MUTATION = `mutation createFulfillment(
-    $locationId: ID!, 
-    $trackingNumber: String!, 
-    $trackingUrl: [String!]!, 
-    $trackingCompany: String!, 
-    $notifyCustomer: Boolean!, 
-    $fulfillmentOrderId: ID!
-  ) {
-    fulfillmentCreateV2(fulfillment: {
-      locationId: $locationId,
-      trackingInfo: {
-        number: $trackingNumber,
-        url: $trackingUrl,
-        company: $trackingCompany
-      },
-      notifyCustomer: $notifyCustomer,
-      lineItemsByFulfillmentOrder: [
-        {
-          fulfillmentOrderId: $fulfillmentOrderId
-        }
-      ]
-    }) {
-      fulfillment {
-        id
-        status
+
+export const FULFILLMENT_MUTATION_WITH_MULTIPLE_TRACKING_URLS = `mutation createFulfillment(
+  $trackingNumber: String!, 
+  $trackingUrls: [String!]!, 
+  $trackingCompany: String!, 
+  $notifyCustomer: Boolean!, 
+  $fulfillmentOrderId: ID!
+) {
+
+  fulfillmentCreate(fulfillment: {
+    lineItemsByFulfillmentOrder: [
+      {
+        fulfillmentOrderId: $fulfillmentOrderId
       }
-      userErrors {
-        field
-        message
-      }
+    ]
+    trackingInfo: {
+      number: $trackingNumber,
+      urls: $trackingUrls,
+      company: $trackingCompany
+    },
+    notifyCustomer: $notifyCustomer
+  }) {
+    fulfillment {
+      id
+      status
     }
-  }`;
+    userErrors {
+      field
+      message
+    }
+  }
+}`;
