@@ -16,8 +16,8 @@ export default class WebhookService {
           apiKey: key,
           password: secret,
         },
-        "2023-04"
-      )}/webhooks.json`;
+        "2024-10"
+      )}/graphql.json`;
       const errorWebhooks: any = [];
       logger.info(
         `!!!!!Register Webhook started!!!!!! ${JSON.stringify(data, null, 2)}`
@@ -27,7 +27,12 @@ export default class WebhookService {
 
       for (const hook of SHOPIFY_WEBHOOKS) {
         logger.info(`!!!!!Processing!!!!!! ${hook.topic}`);
-        const Response = await this.callRegisterWebhook(apiUrl, hook);
+        const Response = await this.callRegisterWebhook(
+          apiUrl,
+          hook,
+          key,
+          secret
+        );
 
         if (!Response?.data?.webhook?.id) {
           logger.info(`!!!!!Not Completed!!!!!! ${hook.topic}`);
@@ -58,13 +63,45 @@ export default class WebhookService {
     return [];
   }
 
-  static async callRegisterWebhook(apiUrl: string, hook: any) {
-    return axios.post(apiUrl, {
-      webhook: {
-        topic: hook.topic,
-        address: hook.address,
-        format: "json",
+  static async callRegisterWebhook(
+    apiUrl: string,
+    hook: any,
+    key: string,
+    secret: string
+  ) {
+    const WEBHOOK_MUTATION = ` mutation webhookSubscriptionCreate($topic: WebhookSubscriptionTopic!, $address: URL!) {
+        webhookSubscriptionCreate(topic: $topic, webhookSubscription: {callbackUrl: $address, format: JSON}) {
+          userErrors {
+            field
+            message
+          }
+          webhookSubscription {
+            id
+          }
+        }
+      }
+    `;
+
+    const config = {
+      auth: {
+        username: key,
+        password: secret,
       },
-    });
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    return axios.post(
+      apiUrl,
+      {
+        query: WEBHOOK_MUTATION,
+        variables: {
+          topic: hook.topic.toUpperCase(),
+          address: hook.address,
+        },
+      },
+      config
+    );
   }
 }
