@@ -20,13 +20,12 @@ import {
 } from "./shopifyMutations";
 import {
   GET_ACCESS_SCOPE_DATA,
-  GET_ALL_PRODUCTS,
   GET_INVENTORY_ITEM_DATA,
   GET_LOCATION_DATA,
   GET_ORDER_DATA,
   GET_PRODUCT_DATA,
+  getProductsByIdsQuery,
 } from "./shopifyQueries";
-
 
 export default class ShopifyService {
   // maintain a local cache for shop api keys, password etc.
@@ -170,7 +169,9 @@ export default class ShopifyService {
     try {
       // find out active shopify locations
       const allLocations = await this.getLocationList(shopifyRef);
-      const activeLocations = allLocations.filter((l) => l.active && l.zip);
+      const activeLocations = allLocations.filter(
+        (l) => l.isActive && l.address.zip
+      );
 
       if (activeLocations.length === 0) {
         throw new Error(
@@ -385,17 +386,14 @@ export default class ShopifyService {
           const { inventoryItem } = variant;
           try {
             try {
-              const { harmonizedSystemCode } =
-                await this.getInventoryItemData(
-                  shopifyUrlInstance,
-                  String(inventoryItem.id)
-                );
+              const { harmonizedSystemCode } = await this.getInventoryItemData(
+                shopifyUrlInstance,
+                String(inventoryItem.id)
+              );
 
               responseVariants.push({
                 id: String(variant.id),
-                hsn: harmonizedSystemCode
-                  ? String(harmonizedSystemCode)
-                  : "", // do not parse directy with String(), null also gets strigified :X
+                hsn: harmonizedSystemCode ? String(harmonizedSystemCode) : "", // do not parse directy with String(), null also gets strigified :X
               });
               logger.info(
                 `HSN - ${productId} - ${variant.id} - ${harmonizedSystemCode}`
@@ -511,7 +509,7 @@ export default class ShopifyService {
   static async getLocationData(shopify: ShopifyUrlInstance) {
     try {
       // return shopifyRef.location.list();
-     // locations
+      // locations
       const url = `${getShopifyBaseUrl(shopify, "2024-10")}/graph.json`;
       logger.info(`Shopify call: [${url}]`);
 
@@ -527,7 +525,7 @@ export default class ShopifyService {
         },
       });
 
-      return data.data.locations;
+      return data.data.locations.nodes;
     } catch (e) {
       throw e;
     }
@@ -539,7 +537,7 @@ export default class ShopifyService {
   ) {
     try {
       // return shopify.order.cancel(Number(externalOrderId));
-     // orders/${externalOrderId}/cancel
+      // orders/${externalOrderId}/cancel
       const url = `${getShopifyBaseUrl(shopify, "2024-10")}/graphql.json`;
       logger.info(`Shopify call: [${url}]`);
 
@@ -596,8 +594,8 @@ export default class ShopifyService {
           "X-Shopify-Access-Token": shopify.password,
         },
         data: {
-          query: GET_ALL_PRODUCTS,
-          variables: { limit: limitNumber, ids: productIds },
+          query: getProductsByIdsQuery(productIds),
+          variables: { limit: limitNumber },
         },
       });
 

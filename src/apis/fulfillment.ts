@@ -281,7 +281,7 @@ export default class FulfillmentService {
           if (movedOrder) {
             updatedFulfillmentOrder.push({
               ...fulfillmentOrderItem,
-              assigned_location_id: wherehouseAssignedLocationId,
+              "assignedLocation.location.id": wherehouseAssignedLocationId,
             });
           } else {
             updatedFulfillmentOrder.push(fulfillmentOrderItem);
@@ -302,7 +302,6 @@ export default class FulfillmentService {
           data: {
             query: CREATE_FULFILLMENT_MUTATION,
             variables: {
-              locationId: updatedFulfillmentOrderItem.assigned_location_id,
               trackingNumber: fulfillmentDetails.tracking_number,
               trackingUrl: fulfillmentDetails.tracking_urls[0],
               trackingCompany: fulfillmentDetails.tracking_company,

@@ -24,33 +24,42 @@ export const GET_LOCATION_DATA = `
         nodes {
           id
           name
+          address {
+          zip
+        }
+        isActive
         }
     }
   }
 `;
 
-export const GET_ALL_PRODUCTS = `
-  query getAllProductList($limit: Int!) {
-    products(first: $limit) {
-    nodes {
-      id
-      title
-      vendor
-      variants (first: $limit){
-        nodes {
-          id
-          inventoryItem {
+export function getProductsByIdsQuery(ids) {
+  return `query getProductsByIds($limit: Int!) {
+    ${ids
+      .map(
+        (id, index) => `
+      product${index}: product(id: "${id}") {
+        id
+        title
+        description
+        vendor
+        variants(first: $limit) {
+          nodes {
             id
+            inventoryItem {
+              id
+            }
           }
         }
       }
-    }
-  }
-  }
-`;
+    `
+      )
+      .join("")}
+  }`;
+}
 
 export const GET_PRODUCT_DATA = `
-  query getProductData($productID: ID!) {
+  query getProductData($productID: ID!,$feilds:String!) {
     product(id: $productID) {
   id
   title

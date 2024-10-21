@@ -14,9 +14,8 @@ export const MOVE_ORDER_FULFILLMENT_LOCATION_MUTATION = `mutation movefulfillmen
     }
 `;
 
-export const CREATE_FULFILLMENT_MUTATION = `mutation createFulfillment($locationId: ID!, $trackingNumber: String!, $trackingUrl: URL!, $trackingCompany: String!, $notifyCustomer: Boolean!, $fulfillmentOrderId: ID!) {
+export const CREATE_FULFILLMENT_MUTATION = `mutation createFulfillment($trackingNumber: String!, $trackingUrl: URL!, $trackingCompany: String!, $notifyCustomer: Boolean!, $fulfillmentOrderId: ID!) {
   fulfillmentCreate(fulfillment: {
-    locationId: $locationId,
     trackingInfo: {
       number: $trackingNumber,
       url: $trackingUrl,
@@ -39,7 +38,6 @@ export const CREATE_FULFILLMENT_MUTATION = `mutation createFulfillment($location
     }
   }
 }`;
-
 
 export const FULFILLMENT_MUTATION_WITH_MULTIPLE_TRACKING_URLS = `mutation createFulfillment(
   $trackingNumber: String!, 
