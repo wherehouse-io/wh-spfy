@@ -1,21 +1,96 @@
 export const GET_ORDER_DATA = `
-  query getOrderData($externalOrderId: ID!) {
-    order(id: $externalOrderId) {
+query getOrderData($externalOrderId: ID!) {
+  order(id: $externalOrderId) {
+    email
+    id
+    totalWeight
+    taxesIncluded
+    discountCodes
+    cancelledAt
+    displayFinancialStatus
+    billingAddress {
+      address1
+      address2
+      city
+      country
+      firstName
       id
-      name
-      email
-      paymentGatewayNames
-      totalPrice
-      lineItems(first: 5) {
-        
-          nodes {
-            title
-            quantity
+      lastName
+      phone
+      province
+      zip
+      company
+    }
+    shippingAddress {
+      address1
+      address2
+      city
+      company
+      firstName
+      id
+      lastName
+      phone
+      province
+      zip
+      country
+      countryCode
+    }
+    lineItems (first:10){
+      nodes {
+        variant {
+          id
+        }
+        name
+        product {
+          id
+        }
+        quantity
+        taxLines {
+          rate
+          title
+          price
+        }
+        discountAllocations {
+          allocatedAmount {
+            amount
           }
-        
+        }
+        sku
+      }
+    }
+    taxLines {
+      price
+      rate
+      title
+    }
+    customer {
+      email
+      phone
+      lastName
+      id
+      firstName
+      createdAt
+      defaultAddress {
+        address1
+        address2
+        city
+        company
+        province
+        zip
+      }
+    }
+    shippingLines(first:10) {
+      nodes {
+        taxLines {
+          price
+        }
+        discountedPrice {
+          amount
+        }
       }
     }
   }
+}
 `;
 
 export const GET_LOCATION_DATA = `
@@ -59,22 +134,38 @@ export function getProductsByIdsQuery(ids) {
 }
 
 export const GET_PRODUCT_DATA = `
-  query getProductData($productID: ID!,$feilds:String!) {
-    product(id: $productID) {
-  id
-  title
-  description
-  vendor
-  variants(first: 10) {
-    nodes {
+query getProductData($productID: ID!) {
+  product(id: $productID) {
+    variants(first:10) {
+      nodes {
+        barcode
+        compareAtPrice
+        createdAt
+        taxable
+        title
+        sku
+        updatedAt
+        inventoryQuantity
+        inventoryPolicy
         inventoryItem {
           id
         }
-        id
+        unitPriceMeasurement {
+          quantityUnit
+          measuredType
+          quantityValue
+          referenceUnit
+          referenceValue
+        }
+        price
+        position
+        product {
+          id
+        }
       }
+    }
   }
 }
-  }
 `;
 
 export const GET_INVENTORY_ITEM_DATA = `

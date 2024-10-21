@@ -183,7 +183,7 @@ export default class ShopifyService {
       // else return id of the first warehouse
       console.log("!!!!activeLocations!!!!", activeLocations);
       const matchedLocation = activeLocations.find(
-        (loc) => loc.zip === String(warehousZip)
+        (loc) => loc.address.zip === String(warehousZip)
       );
 
       // hack: take last location or the first one - do you beauti has stock present in last one only
@@ -624,7 +624,7 @@ export default class ShopifyService {
         },
         data: {
           query: GET_PRODUCT_DATA,
-          variables: { productID, fields },
+          variables: { productID },
         },
       });
       return data.data.product;
