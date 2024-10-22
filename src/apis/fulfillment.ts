@@ -211,7 +211,7 @@ export default class FulfillmentService {
 
       if (fulfillmentOrderData?.fulfillment_orders?.length === 0) {
         // throw new Error("Fulfillment Order Is Not Found");
-        throw new Error("Permission disabled for new fulfillment flow")
+        throw new Error("Permission disabled for new fulfillment flow");
       }
 
       const updatedFulfillmentOrder: any = [];
@@ -243,27 +243,31 @@ export default class FulfillmentService {
             `Shopify call for move location url: [${moveLocationUrl}]`
           );
 
-          const { data: moveLocationData } = await axios({
-            method: "POST",
-            url: moveLocationUrl,
-            data: JSON.stringify({
-              fulfillment_order: {
-                new_location_id: wherehouseAssignedLocationId,
+          try {
+            const { data: moveLocationData } = await axios({
+              method: "POST",
+              url: moveLocationUrl,
+              data: JSON.stringify({
+                fulfillment_order: {
+                  new_location_id: wherehouseAssignedLocationId,
+                },
+              }),
+              headers: {
+                "Content-Type": "application/json",
               },
-            }),
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
-
-          // IF fulfillment order location is moved successFully then push it into updated fulfillment order array with updated location id
-          // If this fulfillment order location is not moved then will not be pushed so fulfillment twill not be created for that order
-          updatedFulfillmentOrder.push({
-            ...fulfillmentOrderItem,
-            assigned_location_id: !moveLocationData?.original_fulfillment_order
-              ? fulfillmentOrderItem.assigned_location_id
-              : wherehouseAssignedLocationId,
-          });
+            });
+            // IF fulfillment order location is moved successFully then push it into updated fulfillment order array with updated location id
+            // If this fulfillment order location is not moved then will not be pushed so fulfillment twill not be created for that order
+            updatedFulfillmentOrder.push({
+              ...fulfillmentOrderItem,
+              assigned_location_id:
+                !moveLocationData?.original_fulfillment_order
+                  ? fulfillmentOrderItem.assigned_location_id
+                  : wherehouseAssignedLocationId,
+            });
+          } catch (error) {
+            logger.warn(error);
+          }
         } else {
           updatedFulfillmentOrder.push({
             ...fulfillmentOrderItem,
