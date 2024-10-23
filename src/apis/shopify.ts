@@ -712,13 +712,14 @@ export default class ShopifyService {
       // orders/${externalOrderId}/transactions.json
       const url = `${getShopifyBaseUrl(shopify, "2024-10")}/graphql.json`;
       logger.info(`Shopify call: [${url}]`);
+      const orderId = `gid://shopify/Order/${externalOrderId}`;
 
       const { data } = await axios({
         method: "POST",
         url,
         data: {
           query: CREATE_TRANSACTION,
-          variables: { externalOrderId },
+          variables: { externalOrderId: orderId, parentId: "124", amount: 100 },
         },
         headers: {
           "Content-Type": " application/json",
@@ -750,7 +751,13 @@ export default class ShopifyService {
         url,
         data: {
           query: INVENTORY_UPDATE,
-          variables: { inventoryUpdate: inventoryUpdateObject },
+          variables: {
+            available_adjustment: inventoryUpdateObject.available_adjustment,
+            location_id: inventoryUpdateObject.location_id,
+            name: "available",
+            reason: "correction",
+            inventory_item_id: inventoryUpdateObject.inventory_item_id,
+          },
         },
         headers: {
           "Content-Type": "application/json",

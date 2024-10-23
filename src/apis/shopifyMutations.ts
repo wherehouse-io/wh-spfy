@@ -19,13 +19,15 @@ export const CANCEL_ORDER = `
   }
 `;
 
+
+// need to figure out the parentTransactionId 
 export const CREATE_TRANSACTION = `
-  mutation createTransaction($externalOrderId: ID!) {
-    orderCreateTransaction(
+  mutation createTransaction($externalOrderId: ID!, $parentId: ID!,$amount: Money!) {
+   orderCapture(
       input: {
         id: $externalOrderId
-        kind: CAPTURE
-        source: EXTERNAL
+        parentTransactionId:$parentId
+        amount: $amount
       }
     ) {
       transaction {
@@ -37,8 +39,16 @@ export const CREATE_TRANSACTION = `
 `;
 
 export const INVENTORY_UPDATE = `
-  mutation inventoryUpdateAtShopifyForRTO($inventoryUpdateInput: InventoryLevelAdjustInput!) {
-    inventoryLevelAdjust(input: $inventoryUpdateInput) {
+  mutation inventoryUpdateAtShopifyForRTO($available_adjustment: Int!, $location_id:number!,$name:String!, $reason: String!,$inventory_item_id:ID!) {
+    inventoryAdjustQuantities(input:  {
+     reason: $reason,
+     name: $name, 
+     changes:{
+     delta: $available_adjustment, 
+     inventoryItemId: $inventory_item_id, 
+     locationId: $location_id
+     }
+    }) {
       inventoryLevel {
         id
         available
