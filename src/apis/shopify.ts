@@ -326,13 +326,18 @@ export default class ShopifyService {
    * @param orderData
    * @param userId
    */
-  static async markCODOrderAsPaid(externalOrderId: string, userId: string) {
+  static async markCODOrderAsPaid(
+    externalOrderId: string,
+    userId: string,
+    amount: any
+  ) {
     try {
       const shopify = await this.getShopifyUrlInstance(userId);
 
       const createdTransactions = await this.createTransactionAtShopify(
         shopify,
-        externalOrderId
+        externalOrderId,
+        amount
       );
 
       if (createdTransactions[`errors`]) {
@@ -699,7 +704,8 @@ export default class ShopifyService {
 
   static async createTransactionAtShopify(
     shopify: ShopifyUrlInstance,
-    externalOrderId: string
+    externalOrderId: string,
+    amount
   ) {
     try {
       // const createdTransactions = await this.createTransactionAtShopify(
@@ -709,23 +715,40 @@ export default class ShopifyService {
 
       //TODO: Need to update version and check payload
 
-      // orders/${externalOrderId}/transactions.json
       const url = `${getShopifyBaseUrl(shopify, "2024-10")}/graphql.json`;
       logger.info(`Shopify call: [${url}]`);
       const orderId = `gid://shopify/Order/${externalOrderId}`;
+      const amount = 100;
 
       const { data } = await axios({
         method: "POST",
         url,
         data: {
           query: CREATE_TRANSACTION,
-          variables: { externalOrderId: orderId, parentId: "124", amount: 100 },
+          variables: {
+            input: {
+              orderId: orderId,
+              amount,
+              parentTransactionId: null,
+            },
+          },
         },
         headers: {
-          "Content-Type": " application/json",
+          "Content-Type": "application/json",
           "X-Shopify-Access-Token": shopify.password,
         },
       });
+
+      if (data.errors) {
+        throw new Error(
+          `Shopify GraphQL Error: ${JSON.stringify(data.errors)}`
+        );
+      }
+
+      const transaction = data.data.orderCapture.transaction;
+      if (!transaction) {
+        throw new Error("Transaction creation failed");
+      }
 
       return data.data.transaction;
     } catch (e) {

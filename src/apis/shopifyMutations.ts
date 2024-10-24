@@ -19,20 +19,23 @@ export const CANCEL_ORDER = `
   }
 `;
 
-
-// need to figure out the parentTransactionId 
 export const CREATE_TRANSACTION = `
-  mutation createTransaction($externalOrderId: ID!, $parentId: ID!,$amount: Money!) {
+  mutation createTransaction($externalOrderId: ID!, $amount: Money!, $parentTransactionId: ID!) {
    orderCapture(
       input: {
         id: $externalOrderId
-        parentTransactionId:$parentId
         amount: $amount
+        kind: SALE
+        parentTransactionId : $parentTransactionId
       }
     ) {
       transaction {
         id
         status
+      }
+      userErrors {
+        field
+        message
       }
     }
   }
