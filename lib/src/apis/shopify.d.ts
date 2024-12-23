@@ -46,7 +46,7 @@ export default class ShopifyService {
     static getOrderData(shopify: ShopifyUrlInstance, externalOrderId: string): Promise<any>;
     static getLocationData(shopify: ShopifyUrlInstance): Promise<any>;
     static cancelOrderApi(shopify: ShopifyUrlInstance, externalOrderId: string): Promise<any>;
-    static getAllProductList(shopify: ShopifyUrlInstance, limitNumber: number, productIds?: string): Promise<any>;
+    static getAllProductList(shopify: ShopifyUrlInstance, limitNumber: number, productIds?: string): Promise<any[]>;
     static getProductData(shopify: ShopifyUrlInstance, productId: string, fields?: string): Promise<any>;
     static getInventoryItemData(shopify: ShopifyUrlInstance, inventoryItemId: string): Promise<any>;
     static getAccessScopeData(shopify: ShopifyUrlInstance): Promise<any>;
