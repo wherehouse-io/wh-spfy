@@ -172,13 +172,13 @@ export default class ProductService {
         //   ...params,
         //   fields: `id,variants,images,title,handle,status,productType`,
         // });
-        const products = await ShopifyService.getAllProductList(
+        const products:any = await ShopifyService.getAllProductList(
           shopifyInstance,
           params.limit
         );
         productLists = productLists.concat(products);
 
-        params = products.nextPageParameters;
+        params = products.nextPageParameters 
       } while (params !== undefined);
 
       return productLists;

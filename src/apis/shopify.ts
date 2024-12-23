@@ -604,7 +604,7 @@ export default class ShopifyService {
         },
       });
 
-      return data.data.products;
+      return [{...data.data}];
     } catch (e) {
       throw e;
     }
@@ -621,7 +621,7 @@ export default class ShopifyService {
       const url = `${getShopifyBaseUrl(shopify, "2024-10")}/graphql.json`;
       const productID = `gid://shopify/Product/${productId}`;
       const { data } = await axios({
-        method: "GET",
+        method: "POST",
         url,
         headers: {
           "Content-Type": "application/json",
@@ -803,3 +803,4 @@ setTimeout(async () => {
     logger.error(err);
   }
 }, 7 * 24 * 60 * 60);
+
