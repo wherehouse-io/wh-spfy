@@ -139,7 +139,7 @@ export default class FulfillmentService {
   ) {
     try {
       // return shopify.fulfillment.list(Number(externalOrderId));
-      const url = `${getShopifyBaseUrl(shopify, "2024-10")}/graphql.json`;
+      const url = `${getShopifyBaseUrl(shopify)}/graphql.json`;
       logger.info(`Shopify call: [${url}]`);
       const fulfillmentId = `gid://shopify/Order/${externalOrderId}`;
       const { data } = await axios({
@@ -169,7 +169,7 @@ export default class FulfillmentService {
     try {
       // await shopify.fulfillment.create(orderId, fulfillmentDetails);
 
-      const url = `${getShopifyBaseUrl(shopify, "2024-10")}/graphql.json`;
+      const url = `${getShopifyBaseUrl(shopify)}/graphql.json`;
       logger.info(`Shopify call: [${url}]`);
 
       const { data } = await axios({
@@ -207,7 +207,7 @@ export default class FulfillmentService {
     fulfillmentDetails: IFulfillmentDetails
   ) {
     try {
-      const shopifyBaseURl = getShopifyBaseUrl(shopify, "2024-10");
+      const shopifyBaseURl = getShopifyBaseUrl(shopify);
       // Getting Fulfillment Orders
       const url = `${shopifyBaseURl}/graphql.json`;
 

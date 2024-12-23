@@ -46,11 +46,7 @@ export const getShopifyBaseUrl = (
   shopify: ShopifyUrlInstance,
   version?: string
 ) => {
-  if (version) {
-    return `https://${shopify.apiKey}:${shopify.password}@${shopify.shopName}/admin/api/${version}`;
-  }
-
-  return `https://${shopify.apiKey}:${shopify.password}@${shopify.shopName}/admin/api/2024-10`;
+    return `https://${shopify.apiKey}:${shopify.password}@${shopify.shopName}/admin/api/${version ||'2024-10' }`;
 };
 
 export const getShopifyOauthBaseUrl = (

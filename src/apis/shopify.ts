@@ -439,7 +439,7 @@ export default class ShopifyService {
     wherehouseFulfillment: IOrderFulfillment
   ) {
     try {
-      const url = `${getShopifyBaseUrl(shopify, "2024-10")}/graphql.json`;
+      const url = `${getShopifyBaseUrl(shopify)}/graphql.json`;
       // return shopify.fulfillment.cancel(
       //   Number(externalOrderId),
       //   wherehouseFulfillment.id
@@ -481,7 +481,7 @@ export default class ShopifyService {
   ) {
     try {
       // const shopifyOrderData = await shopify.order.get(Number(externalOrderId));
-      const url = `${getShopifyBaseUrl(shopify, "2024-10")}/graphql.json`;
+      const url = `${getShopifyBaseUrl(shopify)}/graphql.json`;
       logger.info(`Shopify call: [${url}]`);
 
       const getOrderId = `gid://shopify/Order/${externalOrderId}`;
@@ -515,7 +515,7 @@ export default class ShopifyService {
     try {
       // return shopifyRef.location.list();
       // locations
-      const url = `${getShopifyBaseUrl(shopify, "2024-10")}/graph.json`;
+      const url = `${getShopifyBaseUrl(shopify)}/graph.json`;
       logger.info(`Shopify call: [${url}]`);
 
       const { data } = await axios({
@@ -543,7 +543,7 @@ export default class ShopifyService {
     try {
       // return shopify.order.cancel(Number(externalOrderId));
       // orders/${externalOrderId}/cancel
-      const url = `${getShopifyBaseUrl(shopify, "2024-10")}/graphql.json`;
+      const url = `${getShopifyBaseUrl(shopify)}/graphql.json`;
       logger.info(`Shopify call: [${url}]`);
 
       const cancelOrderId = `gid://shopify/Order/${externalOrderId}`;
@@ -587,7 +587,7 @@ export default class ShopifyService {
       //     "2023-04"
       //   )}/products.json?limit=${limitNumber}`;
       // }
-      const baseUrl: string = getShopifyBaseUrl(shopify, "2024-10");
+      const baseUrl: string = getShopifyBaseUrl(shopify);
       const url = `${baseUrl}/graphql.json`;
       logger.info(`Shopify call: [${url}]`);
 
@@ -618,7 +618,7 @@ export default class ShopifyService {
     try {
       // const { variants } = await shopify.product.get(Number(productId));
 
-      const url = `${getShopifyBaseUrl(shopify, "2024-10")}/graphql.json`;
+      const url = `${getShopifyBaseUrl(shopify)}/graphql.json`;
       const productID = `gid://shopify/Product/${productId}`;
       const { data } = await axios({
         method: "POST",
@@ -646,7 +646,7 @@ export default class ShopifyService {
       // const { harmonized_system_code } =
       //   await shopify.inventoryItem.get(inventory_item_id);
 
-      const url = `${getShopifyBaseUrl(shopify, "2024-10")}/graphql.json`;
+      const url = `${getShopifyBaseUrl(shopify)}/graphql.json`;
       logger.info(`Shopify call: [${url}]`);
       const InventoryItemID = `gid://shopify/InventoryItem/${inventoryItemId}`;
       const { data } = await axios({
@@ -671,7 +671,7 @@ export default class ShopifyService {
   static async getAccessScopeData(shopify: ShopifyUrlInstance) {
     try {
       // access_scopes
-      const url = `${getShopifyBaseUrl(shopify, "2024-10")}/graphql.json`;
+      const url = `${getShopifyBaseUrl(shopify)}/graphql.json`;
       logger.info(`Shopify call: [${url}]`);
 
       const { data } = await axios({
@@ -715,7 +715,7 @@ export default class ShopifyService {
 
       //TODO: Need to update version and check payload
 
-      const url = `${getShopifyBaseUrl(shopify, "2024-10")}/graphql.json`;
+      const url = `${getShopifyBaseUrl(shopify)}/graphql.json`;
       logger.info(`Shopify call: [${url}]`);
       const orderId = `gid://shopify/Order/${externalOrderId}`;
       const amount = 100;
@@ -762,7 +762,7 @@ export default class ShopifyService {
   ) {
     try {
       // inventory_levels/adjust
-      const url = `${getShopifyBaseUrl(shopify, "2024-01")}/graphql.json`;
+      const url = `${getShopifyBaseUrl(shopify)}/graphql.json`;
 
       logger.info(`Shopify call: [${url}]`);
       logger.info(

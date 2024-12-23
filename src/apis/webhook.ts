@@ -15,8 +15,7 @@ export default class WebhookService {
           shopName: shop,
           apiKey: key,
           password: secret,
-        },
-        "2024-10"
+        }
       )}/graphql.json`;
       const errorWebhooks: any = [];
       logger.info(
