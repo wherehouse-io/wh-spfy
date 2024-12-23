@@ -17,7 +17,7 @@ import {
   CANCEL_ORDER,
   CREATE_TRANSACTION,
   INVENTORY_UPDATE,
-} from "./shopifyMutations";
+} from "../helpers/graphql/mutations";
 import {
   GET_ACCESS_SCOPE_DATA,
   GET_INVENTORY_ITEM_DATA,
@@ -25,7 +25,7 @@ import {
   GET_ORDER_DATA,
   GET_PRODUCT_DATA,
   getProductsByIdsQuery,
-} from "./shopifyQueries";
+} from "../helpers/graphql/queries";
 
 export default class ShopifyService {
   // maintain a local cache for shop api keys, password etc.

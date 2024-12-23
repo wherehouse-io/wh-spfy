@@ -8,12 +8,12 @@ import { getShopifyBaseUrl } from "../helpers";
 import {
   GET_FULFILLMENT_LIST_COUNT_QUERY,
   GET_FULFILLMENT_ORDER_QUERY,
-} from "./fulfillmentQueries";
+} from "../helpers/graphql/queries";
 import {
   CREATE_FULFILLMENT_MUTATION,
   FULFILLMENT_MUTATION_WITH_MULTIPLE_TRACKING_URLS,
   MOVE_ORDER_FULFILLMENT_LOCATION_MUTATION,
-} from "./fulfillmentMutations";
+} from "../helpers/graphql/mutations";
 
 interface IFulfillmentDetails {
   location_id: string;
