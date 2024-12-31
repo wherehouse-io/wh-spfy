@@ -86,7 +86,6 @@ export default class ProductService {
         inventoryQuantity: Number(variant.inventoryQuantity) || 0,
         barcode: variant.barcode || "",
         handle,
-        m: JSON.stringify(images.edges[0]),
         imageUrls: variant.image?.id
           ? images?.edges
               .filter((image) => image.node.id === String(variant?.image?.id))
