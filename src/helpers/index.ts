@@ -46,12 +46,12 @@ export const getShopifyBaseUrl = (
   shopify: ShopifyUrlInstance,
   version?: string
 ) => {
-    return `https://${shopify.apiKey}:${shopify.password}@${shopify.shopName}/admin/api/${version ||'2024-10' }`;
+  return `https://${shopify.apiKey}:${shopify.password}@${
+    shopify.shopName
+  }/admin/api/${version || "2024-10"}`;
 };
 
-export const getShopifyOauthBaseUrl = (
-  shopify: ShopifyUrlInstance
-) => {
+export const getShopifyOauthBaseUrl = (shopify: ShopifyUrlInstance) => {
   return `https://${shopify.apiKey}:${shopify.password}@${shopify.shopName}/admin/oauth`;
 };
 

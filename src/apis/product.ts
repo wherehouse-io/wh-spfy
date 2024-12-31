@@ -72,8 +72,8 @@ export default class ProductService {
         category: productType || "",
         createdAt: new Date(variant.createdAt),
         updatedAt: new Date(variant.updatedAt),
-        w : variant.inventoryItem.measurement.weight.unit,
-        x:  Number(variant.inventoryItem.measurement.weight.value),
+        w: variant.inventoryItem.measurement.weight.unit,
+        x: Number(variant.inventoryItem.measurement.weight.value),
         weight: convertShopifyWeightToGrams(
           variant.inventoryItem.measurement.weight.unit,
           Number(variant.inventoryItem.measurement.weight.value) || 0
