@@ -90,7 +90,7 @@ export default class ProductService {
           ? images?.edges
               .filter((image) => image.node.id === String(variant?.image?.id))
               .map((o: { src: any }) => o.src)
-          : [],
+          : [images.edges[0].node.src],
         productType: PRODUCT_TYPE.VARIATION,
         dimensions: {},
       };
