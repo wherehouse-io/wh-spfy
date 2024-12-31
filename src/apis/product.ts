@@ -89,7 +89,7 @@ export default class ProductService {
           ? images
               .filter((image: { id: any }) => image.id === variant.imageId)
               .map((o: { src: any }) => o.src)
-          : [],
+          : [images[0]?.src],
         productType: PRODUCT_TYPE.VARIATION,
         dimensions: {},
       };
