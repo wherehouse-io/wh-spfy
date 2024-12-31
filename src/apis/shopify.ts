@@ -443,6 +443,7 @@ export default class ShopifyService {
         url,
         data: JSON.stringify({}),
         headers: {
+          "X-Shopify-Access-Token": shopify.password,
           "Content-Type": " application/json",
         },
       });
@@ -470,6 +471,7 @@ export default class ShopifyService {
         method: "GET",
         url,
         headers: {
+          "X-Shopify-Access-Token": shopify.password,
           "Content-Type": " application/json",
         },
       });
@@ -498,6 +500,7 @@ export default class ShopifyService {
         method: "GET",
         url,
         headers: {
+          "X-Shopify-Access-Token": shopify.password,
           "Content-Type": " application/json",
         },
       });
@@ -526,6 +529,7 @@ export default class ShopifyService {
         url,
         data: JSON.stringify({}),
         headers: {
+          "X-Shopify-Access-Token": shopify.password,
           "Content-Type": " application/json",
         },
       });
@@ -566,6 +570,7 @@ export default class ShopifyService {
         method: "GET",
         url,
         headers: {
+          "X-Shopify-Access-Token": shopify.password,
           "Content-Type": " application/json",
         },
       });
@@ -593,6 +598,7 @@ export default class ShopifyService {
         method: "GET",
         url,
         headers: {
+          "X-Shopify-Access-Token": shopify.password,
           "Content-Type": "application/json",
         },
       });
@@ -621,6 +627,7 @@ export default class ShopifyService {
         method: "GET",
         url,
         headers: {
+          "X-Shopify-Access-Token": shopify.password,
           "Content-Type": " application/json",
         },
       });
@@ -640,6 +647,7 @@ export default class ShopifyService {
         method: "GET",
         url,
         headers: {
+          "X-Shopify-Access-Token": shopify.password,
           "Content-Type": " application/json",
         },
       });
@@ -687,6 +695,7 @@ export default class ShopifyService {
           },
         }),
         headers: {
+          "X-Shopify-Access-Token": shopify.password,
           "Content-Type": " application/json",
         },
       });
@@ -717,6 +726,7 @@ export default class ShopifyService {
         url,
         data: JSON.stringify(inventoryUpdateObject),
         headers: {
+          "X-Shopify-Access-Token": shopify.password,
           "Content-Type": "application/json",
         },
       });
