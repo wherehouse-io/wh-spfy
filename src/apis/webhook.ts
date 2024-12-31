@@ -27,7 +27,7 @@ export default class WebhookService {
 
       for (const hook of SHOPIFY_WEBHOOKS) {
         logger.info(`!!!!!Processing!!!!!! ${hook.topic}`);
-        const Response = await this.callRegisterWebhook(apiUrl, hook);
+        const Response = await this.callRegisterWebhook(apiUrl, hook, secret);
 
         if (!Response?.data?.webhook?.id) {
           logger.info(`!!!!!Not Completed!!!!!! ${hook.topic}`);
@@ -58,13 +58,14 @@ export default class WebhookService {
     return [];
   }
 
-  static async callRegisterWebhook(apiUrl: string, hook: any) {
+  static async callRegisterWebhook(apiUrl: string, hook: any, secret: string) {
     return axios.post(apiUrl, {
       webhook: {
         topic: hook.topic,
         address: hook.address,
         format: "json",
       },
+      "X-Shopify-Access-Token": secret,
     });
   }
 }

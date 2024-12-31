@@ -140,6 +140,7 @@ export default class FulfillmentService {
         method: "GET",
         url,
         headers: {
+          "X-Shopify-Access-Token": shopify.password,
           "Content-Type": "application/json",
         },
       });
@@ -179,6 +180,7 @@ export default class FulfillmentService {
         url,
         data: payload,
         headers: {
+          "X-Shopify-Access-Token": shopify.password,
           "Content-Type": "application/json",
         },
       });
@@ -205,6 +207,7 @@ export default class FulfillmentService {
         method: "GET",
         url: fulfillmentOrdersUrl,
         headers: {
+          "X-Shopify-Access-Token": shopify.password,
           "Content-Type": "application/json",
         },
       });
@@ -252,6 +255,7 @@ export default class FulfillmentService {
               },
             }),
             headers: {
+              "X-Shopify-Access-Token": shopify.password,
               "Content-Type": "application/json",
             },
           });
@@ -306,6 +310,7 @@ export default class FulfillmentService {
             fulfillment: fulfillmentObject,
           }),
           headers: {
+            "X-Shopify-Access-Token": shopify.password,
             "Content-Type": "application/json",
           },
         });
