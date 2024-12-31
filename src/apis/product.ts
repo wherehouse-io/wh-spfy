@@ -20,6 +20,7 @@ import {
 } from "../helpers";
 import { ShopifyUrlInstance } from "../types/shopify";
 import ShopifyService from "./shopify";
+import { logger } from "logger";
 
 export default class ProductService {
   public static shopType: SHOP_TYPE = SHOP_TYPE.SHOPIFY;
@@ -50,6 +51,7 @@ export default class ProductService {
         webhookId: getWebhookId(this.shopType, req),
       };
     }
+    logger.info(`---body---${JSON.stringify(body)}`)
     const products: IProduct[] = [];
     const { variants, images, title, handle, status, productType } = body;
     // TODO: add HSN code
