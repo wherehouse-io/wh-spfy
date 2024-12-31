@@ -88,7 +88,7 @@ export default class ProductService {
         handle,
         imageUrls: String(variant?.image?.id)
           ? images?.edges
-              .filter((image) => image.node.id === variant.image.id)
+              .filter((image) => image.node.id === String(variant?.image?.id))
               .map((o: { src: any }) => o.src)
           : [],
         productType: PRODUCT_TYPE.VARIATION,
