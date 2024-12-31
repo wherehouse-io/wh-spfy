@@ -58,7 +58,7 @@ export default class ProductService {
       const variant = v.node;
       variantItem = {
         _id: productId,
-        variantId: variant.id.toString(),
+        variantId: String(variant.id),
         webhookId: productData
           ? "add-script-webhook-id"
           : getWebhookId(this.shopType, req),
@@ -81,7 +81,7 @@ export default class ProductService {
         isActive: status === SHOPIFY_PRODUCT_STATUS.ACTIVE,
         sku: variant.sku || "",
         skuId: "",
-        productId: variant.product.id.toString(),
+        productId: String(variant.product.id),
         price: Number(variant.price),
         inventoryQuantity: Number(variant.inventoryQuantity) || 0,
         barcode: variant.barcode || "",
