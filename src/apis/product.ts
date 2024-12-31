@@ -58,7 +58,7 @@ export default class ProductService {
       const variant = v.node;
       variantItem = {
         _id: productId,
-        variantId: String(variant?.id) || '',
+        variantId: variant?.id,
         webhookId: productData
           ? "add-script-webhook-id"
           : getWebhookId(this.shopType, req),
@@ -73,8 +73,8 @@ export default class ProductService {
         createdAt: new Date(variant.createdAt),
         updatedAt: new Date(variant.updatedAt),
         weight: convertShopifyWeightToGrams(
-          variant?.inventoryItem?.measurement?.weight?.unit,
-          Number(variant?.inventoryItem?.measurement?.weight?.value) || 0
+          variant.inventoryItem.measurement.weight.unit,
+          Number(variant.inventoryItem.measurement.weight.value) || 0
         ),
         weightUnit: WEIGHT_UNIT.GRAM,
         taxable: variant.taxable,
