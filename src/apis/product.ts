@@ -86,12 +86,12 @@ export default class ProductService {
         inventoryQuantity: Number(variant.inventoryQuantity) || 0,
         barcode: variant.barcode || "",
         handle,
-        m: String(images.edges[0]),
-        imageUrls: variant?.image?.id
+        m: JSON.stringify(images.edges[0]),
+        imageUrls: variant.image?.id
           ? images?.edges
               .filter((image) => image.node.id === String(variant?.image?.id))
               .map((o: { src: any }) => o.src)
-          : [images?.edges[0]?.node?.src ],
+          : [images?.edges[0]?.node?.src],
         productType: PRODUCT_TYPE.VARIATION,
         dimensions: {},
       };
