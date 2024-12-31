@@ -89,7 +89,7 @@ export default class ProductService {
         barcode: variant.barcode || "",
         handle,
         imageUrls: variant.image.id
-          ? images.edges.node.filter((image: { id: any }) => image.id === variant.image.id)
+          ? images?.edges.filter((image) => image.node.id === variant.image.id)
               .map((o: { src: any }) => o.src)
           : [],
         productType: PRODUCT_TYPE.VARIATION,
