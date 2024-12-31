@@ -181,6 +181,8 @@ export interface IProduct {
   variantTitle: string;
   createdAt?: Date;
   updatedAt?: Date;
+  w: any;
+  x: any;
   weight: number;
   weightUnit: string;
   taxable: boolean;
