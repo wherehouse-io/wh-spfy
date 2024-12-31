@@ -58,7 +58,7 @@ export default class ProductService {
       const variant = v.node;
       variantItem = {
         _id: productId,
-        variantId: variant.id,
+        variantId: String(variant.id),
         webhookId: productData
           ? "add-script-webhook-id"
           : getWebhookId(this.shopType, req),
