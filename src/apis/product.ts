@@ -53,7 +53,7 @@ export default class ProductService {
     const products: IProduct[] = [];
     const { variants, images, title, handle, status, productType } = body;
     // TODO: add HSN code
-    variants.edges.forEach((v: any) => {
+    variants?.edges.forEach((v: any) => {
       let variantItem: IProduct;
       const variant = v.node;
       variantItem = {
@@ -74,7 +74,7 @@ export default class ProductService {
         updatedAt: new Date(variant.updatedAt),
         weight: convertShopifyWeightToGrams(
           variant?.inventoryItem?.measurement?.weight?.unit,
-          Number(variant?.inventoryItem?.measurement?.weight?.value,) || 0
+          Number(variant?.inventoryItem?.measurement?.weight?.value) || 0
         ),
         weightUnit: WEIGHT_UNIT.GRAM,
         taxable: variant.taxable,
@@ -87,7 +87,8 @@ export default class ProductService {
         barcode: variant.barcode || "",
         handle,
         imageUrls: variant.image.id
-          ? images?.edges.filter((image) => image.node.id === variant.image.id)
+          ? images?.edges
+              .filter((image) => image.node.id === variant.image.id)
               .map((o: { src: any }) => o.src)
           : [],
         productType: PRODUCT_TYPE.VARIATION,
@@ -172,13 +173,13 @@ export default class ProductService {
         //   ...params,
         //   fields: `id,variants,images,title,handle,status,productType`,
         // });
-        const products:any = await ShopifyService.getAllProductList(
+        const products: any = await ShopifyService.getAllProductList(
           shopifyInstance,
           params.limit
         );
         productLists = productLists.concat(products);
 
-        params = products.nextPageParameters 
+        params = products.nextPageParameters;
       } while (params !== undefined);
 
       return productLists;
