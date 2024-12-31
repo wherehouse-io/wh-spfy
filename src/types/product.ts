@@ -35,10 +35,10 @@ export enum PRODUCT_TYPE {
 }
 
 export enum SHOPIFY_WEIGHT_UNITS {
-  GRAMS = "g",
+  GRAMS = "GRAMS",
   KILOGRAMS = "KILOGRAMS",
-  OUNCES = "oz",
-  POUNDS = "lb",
+  OUNCES = "OUNCES",
+  POUNDS = "POUNDS",
 }
 
 export enum SHOPIFY_PRODUCT_STATUS {
@@ -181,8 +181,7 @@ export interface IProduct {
   variantTitle: string;
   createdAt?: Date;
   updatedAt?: Date;
-  w: any;
-  x: any;
+  m: any;
   weight: number;
   weightUnit: string;
   taxable: boolean;

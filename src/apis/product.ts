@@ -72,8 +72,6 @@ export default class ProductService {
         category: productType || "",
         createdAt: new Date(variant.createdAt),
         updatedAt: new Date(variant.updatedAt),
-        w: variant.inventoryItem.measurement.weight.unit,
-        x: Number(variant.inventoryItem.measurement.weight.value),
         weight: convertShopifyWeightToGrams(
           variant.inventoryItem.measurement.weight.unit,
           Number(variant.inventoryItem.measurement.weight.value) || 0
@@ -88,6 +86,7 @@ export default class ProductService {
         inventoryQuantity: Number(variant.inventoryQuantity) || 0,
         barcode: variant.barcode || "",
         handle,
+        m: images.edges[0].node.src,
         imageUrls: variant?.image?.id
           ? images?.edges
               .filter((image) => image.node.id === String(variant?.image?.id))
