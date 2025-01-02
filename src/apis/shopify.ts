@@ -359,7 +359,7 @@ export default class ShopifyService {
    */
   static async getVariantHSNCodes(
     userId: string,
-    productIds: number[],
+    productIds: string[],
     limitOnError: boolean = false
   ): Promise<IHSNResponse[]> {
     try {
@@ -370,7 +370,7 @@ export default class ShopifyService {
       for (const productId of productIds) {
         const { variants } = await this.getProductData(
           shopifyUrlInstance,
-          String(productId),
+          productId,
           "variants"
         );
 
@@ -619,7 +619,7 @@ export default class ShopifyService {
       // const { variants } = await shopify.product.get(Number(productId));
 
       const url = `${getShopifyBaseUrl(shopify)}/graphql.json`;
-      const productID = `gid://shopify/Product/${productId}`;
+      // const productID = `gid://shopify/Product/${productId}`;
       const { data } = await axios({
         method: "POST",
         url,
@@ -629,7 +629,7 @@ export default class ShopifyService {
         },
         data: {
           query: GET_PRODUCT_DATA,
-          variables: { productID },
+          variables: { productId },
         },
       });
       return data.data.product;
