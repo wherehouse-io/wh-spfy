@@ -184,7 +184,6 @@ export interface IProduct {
   weight: number;
   weightUnit: string;
   taxable: boolean;
-  m: any;
   isActive: boolean;
   sku: string;
   skuId?: string;
