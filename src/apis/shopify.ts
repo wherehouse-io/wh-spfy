@@ -648,7 +648,6 @@ export default class ShopifyService {
 
       const url = `${getShopifyBaseUrl(shopify)}/graphql.json`;
       logger.info(`Shopify call: [${url}]`);
-      const InventoryItemID = `gid://shopify/InventoryItem/${inventoryItemId}`;
       const { data } = await axios({
         method: "POST",
         url,
@@ -658,7 +657,7 @@ export default class ShopifyService {
         },
         data: {
           query: GET_INVENTORY_ITEM_DATA,
-          variables: { InventoryItemID },
+          variables: { inventoryItemId },
         },
       });
 

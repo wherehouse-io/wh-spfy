@@ -41,7 +41,7 @@ export default class ShopifyService {
      * @param limitOnError flag to decide whether to throw error or send whatever data collected so far
      * @returns array of object containing product id and variants array containing with id and hsn
      */
-    static getVariantHSNCodes(userId: string, productIds: number[], limitOnError?: boolean): Promise<IHSNResponse[]>;
+    static getVariantHSNCodes(userId: string, productIds: string[], limitOnError?: boolean): Promise<IHSNResponse[]>;
     static cancelFulfillmentApi(shopify: ShopifyUrlInstance, externalOrderId: string, wherehouseFulfillment: IOrderFulfillment): Promise<any>;
     static getOrderData(shopify: ShopifyUrlInstance, externalOrderId: string): Promise<any>;
     static getLocationData(shopify: ShopifyUrlInstance): Promise<any>;
