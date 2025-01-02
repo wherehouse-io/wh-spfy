@@ -89,8 +89,11 @@ export default class ProductService {
         m: JSON.stringify(images?.edges[0]),
         imageUrls: variant.image?.id
           ? images?.edges
-              .filter((image) => image.node.id === String(variant?.image?.id))
-              .map((o: { src: any }) => o.src)
+              .filter(
+                (image) =>
+                  String(image?.node?.id) === String(variant?.image?.id)
+              )
+              .map((o) => o?.node?.src)
           : [String(images?.edges[0]?.node?.src) ?? ""],
         productType: PRODUCT_TYPE.VARIATION,
         dimensions: {},
