@@ -144,6 +144,7 @@ query getProductData($productId: ID!) {
         taxable
         title
         sku
+        id
         updatedAt
         inventoryQuantity
         inventoryPolicy
@@ -169,8 +170,8 @@ query getProductData($productId: ID!) {
 `;
 
 export const GET_INVENTORY_ITEM_DATA = `
-  query getInventoryItemData($InventoryItemID: ID!) {
-    inventoryItem(id: $InventoryItemID) {
+  query getInventoryItemData($inventoryItemId: ID!) {
+    inventoryItem(id: $inventoryItemId) {
       id
       sku
       tracked
