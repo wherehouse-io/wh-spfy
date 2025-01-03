@@ -1,6 +1,6 @@
 export const GET_ORDER_DATA = `
-query getOrderData($externalOrderId: ID!) {
-  order(id: $externalOrderId) {
+query getOrderData($getOrderId: ID!) {
+  order(id: $getOrderId) {
     email
     id
     totalWeight
