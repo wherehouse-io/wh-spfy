@@ -329,15 +329,13 @@ export default class ShopifyService {
   static async markCODOrderAsPaid(
     externalOrderId: string,
     userId: string,
-    amount: any
   ) {
     try {
       const shopify = await this.getShopifyUrlInstance(userId);
 
       const createdTransactions = await this.createTransactionAtShopify(
         shopify,
-        externalOrderId,
-        amount
+        externalOrderId
       );
 
       if (createdTransactions[`errors`]) {
@@ -704,7 +702,6 @@ export default class ShopifyService {
   static async createTransactionAtShopify(
     shopify: ShopifyUrlInstance,
     externalOrderId: string,
-    amount
   ) {
     try {
       // const createdTransactions = await this.createTransactionAtShopify(
