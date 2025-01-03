@@ -604,7 +604,7 @@ export default class ShopifyService {
         },
       });
 
-      return [{...data.data}];
+      return [{ ...data.data }];
     } catch (e) {
       throw e;
     }
@@ -632,7 +632,7 @@ export default class ShopifyService {
           variables: { productId },
         },
       });
-      return data.data.product;
+      return data?.data?.product;
     } catch (e) {
       throw e;
     }
@@ -802,4 +802,3 @@ setTimeout(async () => {
     logger.error(err);
   }
 }, 7 * 24 * 60 * 60);
-

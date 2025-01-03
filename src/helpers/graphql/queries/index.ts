@@ -134,8 +134,8 @@ export function getProductsByIdsQuery(ids) {
 }
 
 export const GET_PRODUCT_DATA = `
-query getProductData($productID: ID!) {
-  product(id: $productID) {
+query getProductData($productId: ID!) {
+  product(id: $productId) {
     variants(first:10) {
       nodes {
         barcode
@@ -190,7 +190,6 @@ query {
       }
 `;
 
-
 export const GET_FULFILLMENT_ORDER_QUERY = `query getOrderData($getFulfillmentOrderId: ID!) {
     order(id: $getFulfillmentOrderId) {
        fulfillmentOrders(first:10) {
@@ -206,8 +205,8 @@ export const GET_FULFILLMENT_ORDER_QUERY = `query getOrderData($getFulfillmentOr
      }
     }
    `;
-   
-   export const GET_FULFILLMENT_LIST_COUNT_QUERY = `
+
+export const GET_FULFILLMENT_LIST_COUNT_QUERY = `
      query getFulfillmentListCount($fulfillmentId: ID!) {
       order(id: $fulfillmentId) {
      fulfillments {
@@ -219,4 +218,3 @@ export const GET_FULFILLMENT_ORDER_QUERY = `query getOrderData($getFulfillmentOr
    }
      }
    `;
-   
