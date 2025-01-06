@@ -8,5 +8,5 @@ export default class WebhookService {
         errorWebhooks: any;
     }>;
     static getShopifyWebhooks(): any;
-    static callRegisterWebhook(apiUrl: string, hook: any, key: string, secret: string): Promise<import("axios").AxiosResponse<any>>;
+    static callRegisterWebhook(apiUrl: string, hook: any, secret: string): Promise<import("axios").AxiosResponse<any>>;
 }

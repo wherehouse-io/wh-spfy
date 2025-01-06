@@ -134,3 +134,21 @@ export const MOVE_ORDER_FULFILLMENT_LOCATION_MUTATION = `mutation movefulfillmen
     }
   }`;
   
+  export const WEBHOOK_MUTATION = ` mutation webhookSubscriptionCreate($topic: WebhookSubscriptionTopic!, $address: URL!) {
+    webhookSubscriptionCreate(topic: $topic, webhookSubscription: {callbackUrl: $address, format: JSON}) {
+      userErrors {
+        field
+        message
+      }
+      webhookSubscription {
+        id
+        topic
+        apiVersion {
+          handle
+        }
+        format
+        createdAt
+      }
+    }
+  }
+`;

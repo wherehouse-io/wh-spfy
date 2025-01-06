@@ -1,6 +1,7 @@
 import axios from "axios";
 import { getShopifyBaseUrl } from "../helpers";
 import { logger } from "../logger";
+import { WEBHOOK_MUTATION } from "../helpers/graphql/mutations";
 
 export default class WebhookService {
   static async registerWebhooks(data: {
@@ -10,13 +11,11 @@ export default class WebhookService {
   }) {
     try {
       const { shop, key, secret } = data;
-      const apiUrl = `${getShopifyBaseUrl(
-        {
-          shopName: shop,
-          apiKey: key,
-          password: secret,
-        }
-      )}/graphql.json`;
+      const apiUrl = `${getShopifyBaseUrl({
+        shopName: shop,
+        apiKey: key,
+        password: secret,
+      })}/graphql.json`;
       const errorWebhooks: any = [];
       logger.info(
         `!!!!!Register Webhook started!!!!!! ${JSON.stringify(data, null, 2)}`
@@ -29,7 +28,6 @@ export default class WebhookService {
         const Response = await this.callRegisterWebhook(
           apiUrl,
           hook,
-          key,
           secret
         );
 
@@ -65,32 +63,10 @@ export default class WebhookService {
   static async callRegisterWebhook(
     apiUrl: string,
     hook: any,
-    key: string,
     secret: string
   ) {
-    const WEBHOOK_MUTATION = ` mutation webhookSubscriptionCreate($topic: WebhookSubscriptionTopic!, $address: URL!) {
-        webhookSubscriptionCreate(topic: $topic, webhookSubscription: {callbackUrl: $address, format: JSON}) {
-          userErrors {
-            field
-            message
-          }
-          webhookSubscription {
-            id
-          }
-        }
-      }
-    `;
-
-    const config = {
-      auth: {
-        username: key,
-        password: secret,
-      },
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-
+   
+  
     return axios.post(
       apiUrl,
       {
@@ -100,7 +76,11 @@ export default class WebhookService {
           address: hook.address,
         },
       },
-      config
+      {
+        headers: {
+          "X-Shopify-Access-Token": secret,
+        },
+      }
     );
   }
 }

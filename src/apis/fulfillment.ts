@@ -146,8 +146,8 @@ export default class FulfillmentService {
         method: "POST",
         url,
         headers: {
-          "Content-Type": "application/json",
           "X-Shopify-Access-Token": shopify.password,
+          "Content-Type": "application/json",
         },
         data: {
           query: GET_FULFILLMENT_LIST_COUNT_QUERY,
@@ -186,8 +186,8 @@ export default class FulfillmentService {
           },
         },
         headers: {
-          "Content-Type": "application/json",
           "X-Shopify-Access-Token": shopify.password,
+          "Content-Type": "application/json",
         },
       });
 
@@ -217,8 +217,8 @@ export default class FulfillmentService {
         method: "POST",
         url: url,
         headers: {
-          "Content-Type": "application/json",
           "X-Shopify-Access-Token": shopify.password,
+          "Content-Type": "application/json",
         },
         data: {
           query: GET_FULFILLMENT_ORDER_QUERY,
@@ -262,8 +262,8 @@ export default class FulfillmentService {
             method: "POST",
             url: url,
             headers: {
-              "Content-Type": "application/json",
               "X-Shopify-Access-Token": shopify.password,
+              "Content-Type": "application/json"
             },
             data: {
               query: MOVE_ORDER_FULFILLMENT_LOCATION_MUTATION,
@@ -310,8 +310,8 @@ export default class FulfillmentService {
             },
           },
           headers: {
-            "Content-Type": "application/json",
             "X-Shopify-Access-Token": shopify.password,
+            "Content-Type": "application/json"
           },
         });
 
