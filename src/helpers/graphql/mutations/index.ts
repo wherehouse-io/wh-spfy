@@ -4,6 +4,10 @@ export const CANCEL_FULFILLMENT = `mutation cancelFulfillment($fulfillmentId: ID
         id
         status
       }
+      userErrors {
+        field
+        message
+      }
     }
   }
 `;
@@ -15,7 +19,7 @@ export const CANCEL_ORDER = `
         id
         status
       }
-      UserErrors {
+      userErrors {
         field
         message
       }
