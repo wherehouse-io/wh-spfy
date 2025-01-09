@@ -8,12 +8,6 @@ query getOrderData($getOrderId: ID!) {
                 displayFinancialStatus
                 createdAt
                 updatedAt
-                cancelledAt
-                fulfillments {
-                trackingInfo {
-                  company
-                      }
-                   }
                 billingAddress {
                     address1
                     address2
@@ -95,12 +89,15 @@ query getOrderData($getOrderId: ID!) {
                             vendor
                             variant {
                                 id
+                                weight 
+                                weightUnit
                             }
                             product {
                                 id
                             }
                             taxLines {
                                 rate
+                                ratePercentage
                             }
                         }
                     }
@@ -190,7 +187,9 @@ query getOrderData($getOrderId: ID!) {
                 paymentGatewayNames
                 tags
                 id
-  }
+            }
+        }
+    }
 }
 `;
 
