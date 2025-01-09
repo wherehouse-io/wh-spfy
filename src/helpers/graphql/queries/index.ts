@@ -1,7 +1,7 @@
 export const GET_ORDER_DATA = `
 query getOrderData($getOrderId: ID!) {
   order(id: $getOrderId) {
-          name
+                name
                 taxesIncluded
                 fullyPaid
                 discountCodes
@@ -89,8 +89,6 @@ query getOrderData($getOrderId: ID!) {
                             vendor
                             variant {
                                 id
-                                weight 
-                                weightUnit
                             }
                             product {
                                 id
