@@ -192,7 +192,11 @@ export default class FulfillmentService {
       });
 
       if (data.errors) {
-        throw new Error(`GraphQL errors: ${JSON.stringify(data.errors)}`);
+        throw new Error(
+          `GraphQL errors at fulfillment mutation with multiple tracking url: ${JSON.stringify(
+            data.errors
+          )}`
+        );
       }
 
       return data.data.fulfillmentCreate.fulfillment;
@@ -263,7 +267,7 @@ export default class FulfillmentService {
             url: url,
             headers: {
               "X-Shopify-Access-Token": shopify.password,
-              "Content-Type": "application/json"
+              "Content-Type": "application/json",
             },
             data: {
               query: MOVE_ORDER_FULFILLMENT_LOCATION_MUTATION,
@@ -273,6 +277,14 @@ export default class FulfillmentService {
               },
             },
           });
+
+          if (moveLocationData.errors) {
+            throw new Error(
+              `GraphQL errors At move location: ${JSON.stringify(
+                moveLocationData.errors
+              )}`
+            );
+          }
 
           // IF fulfillment order location is moved successFully then push it into updated fulfillment order array with updated location id
           // If this fulfillment order location is not moved then will not be pushed so fulfillment twill not be created for that order
@@ -311,13 +323,20 @@ export default class FulfillmentService {
           },
           headers: {
             "X-Shopify-Access-Token": shopify.password,
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
           },
         });
 
+        if (data.errors) {
+          throw new Error(
+            `GraphQL errors At Create Fulfillment: ${JSON.stringify(
+              data.errors
+            )}`
+          );
+        }
+
         createdFulfillmentResponse.push(data);
       }
-
       return createdFulfillmentResponse;
     } catch (e) {
       throw e;

@@ -301,10 +301,7 @@ export default class ShopifyService {
     shopify: ShopifyUrlInstance,
     externalOrderId: string
   ) {
-    const shopifyOrderData = await this.getOrderData(
-      shopify,
-      externalOrderId
-    );
+    const shopifyOrderData = await this.getOrderData(shopify, externalOrderId);
 
     const wherehouseFulfillment = shopifyOrderData.fulfillments.filter(
       (fulfillment) => fulfillment.tracking_company === "Wherehouse"
@@ -468,6 +465,10 @@ export default class ShopifyService {
         },
       });
 
+      if (data.errors) {
+        throw new Error(`GraphQL errors: ${JSON.stringify(data.errors)}`);
+      }
+
       return data.data.fulfillmentCancel.fulfillment;
     } catch (e) {
       throw e;
@@ -571,6 +572,10 @@ export default class ShopifyService {
         },
       });
 
+      if (data.errors) {
+        throw new Error(`GraphQL errors: ${JSON.stringify(data.errors)}`);
+      }
+
       return data.data.order;
     } catch (e) {
       throw e;
@@ -619,7 +624,7 @@ export default class ShopifyService {
         },
       });
 
-      const formattedData = transformDataToProductList(data.data)
+      const formattedData = transformDataToProductList(data.data);
 
       return formattedData;
     } catch (e) {
@@ -803,6 +808,10 @@ export default class ShopifyService {
         },
       });
 
+      if (data.errors) {
+        throw new Error(`GraphQL errors: ${JSON.stringify(data.errors)}`);
+      }
+
       return data.data.inventoryLevel;
     } catch (e) {
       logger.error(e);
@@ -818,4 +827,3 @@ setTimeout(async () => {
     logger.error(err);
   }
 }, 7 * 24 * 60 * 60);
-
