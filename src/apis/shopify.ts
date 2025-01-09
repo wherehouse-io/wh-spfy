@@ -10,7 +10,6 @@ import {
 import {
   asyncDelay,
   getShopifyBaseUrl,
-  getShopifyOauthBaseUrl,
 } from "../helpers";
 import {
   CANCEL_FULFILLMENT,

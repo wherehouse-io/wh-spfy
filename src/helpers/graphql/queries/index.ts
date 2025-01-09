@@ -1,94 +1,189 @@
 export const GET_ORDER_DATA = `
 query getOrderData($getOrderId: ID!) {
   order(id: $getOrderId) {
-    email
-    id
-    totalWeight
-    taxesIncluded
-    discountCodes
-    cancelledAt
-    displayFinancialStatus
-    billingAddress {
-      address1
-      address2
-      city
-      country
-      firstName
-      id
-      lastName
-      phone
-      province
-      zip
-      company
-    }
-    shippingAddress {
-      address1
-      address2
-      city
-      company
-      firstName
-      id
-      lastName
-      phone
-      province
-      zip
-      country
-      countryCode
-    }
-    lineItems (first:10){
-      nodes {
-        variant {
-          id
-        }
-        name
-        product {
-          id
-        }
-        quantity
-        taxLines {
-          rate
-          title
-          price
-        }
-        discountAllocations {
-          allocatedAmount {
-            amount
-          }
-        }
-        sku
-      }
-    }
-    taxLines {
-      price
-      rate
-      title
-    }
-    customer {
-      email
-      phone
-      lastName
-      id
-      firstName
-      createdAt
-      defaultAddress {
-        address1
-        address2
-        city
-        company
-        province
-        zip
-      }
-    }
-    shippingLines(first:10) {
-      nodes {
-        taxLines {
-          price
-        }
-        discountedPrice {
-          amount
-        }
-      }
-    }
+          name
+                taxesIncluded
+                fullyPaid
+                discountCodes
+                displayFinancialStatus
+                createdAt
+                updatedAt
+                billingAddress {
+                    address1
+                    address2
+                    city
+                    company
+                    country
+                    countryCode
+                    firstName
+                    lastName
+                    id
+                    name
+                    phone
+                    province
+                    provinceCode
+                    timeZone
+                    zip
+                    longitude
+                    latitude
+                    formattedArea
+                    countryCodeV2
+                    coordinatesValidated
+                }
+                shippingAddress {
+                    address1
+                    address2
+                    city
+                    company
+                    country
+                    coordinatesValidated
+                    countryCode
+                    countryCodeV2
+                    firstName
+                    formattedArea
+                    id
+                    lastName
+                    latitude
+                    longitude
+                    name
+                    phone
+                    province
+                    provinceCode
+                    timeZone
+                    zip
+                }
+                lineItems(first: 20) {
+                    edges {
+                        node {
+                            originalUnitPrice
+                            originalTotal
+                            originalTotalSet {
+                                presentmentMoney {
+                                    amount
+                                }
+                                shopMoney {
+                                    amount
+                                }
+                            }
+                            discountAllocations {
+                                allocatedAmount {
+                                    amount
+                                }
+                            }
+                            currentQuantity
+                            discountedTotal
+                            discountedUnitPrice
+                            fulfillableQuantity
+                            fulfillmentStatus
+                            id
+                            name
+                            nonFulfillableQuantity
+                            originalTotal
+                            originalUnitPrice
+                            quantity
+                            requiresShipping
+                            refundableQuantity
+                            restockable
+                            sku
+                            variantTitle
+                            vendor
+                            variant {
+                                id
+                            }
+                            product {
+                                id
+                            }
+                            taxLines {
+                                rate
+                            }
+                        }
+                    }
+                }
+                taxLines {
+                    channelLiable
+                    price
+                    priceSet {
+                        shopMoney {
+                            amount
+                            currencyCode
+                        }
+                    }
+                    rate
+                    ratePercentage
+                    title
+                }
+                totalWeight
+                customer {
+                    createdAt
+                    email
+                    displayName
+                    firstName
+                    hasTimelineComment
+                    id
+                    lastName
+                    tags
+                    taxExempt
+                    taxExemptions
+                    unsubscribeUrl
+                    updatedAt
+                    validEmailAddress
+                    verifiedEmail
+                    note
+                    multipassIdentifier
+                    numberOfOrders
+                    phone
+                    productSubscriberStatus
+                    legacyResourceId
+                    lifetimeDuration
+                    locale
+                    amountSpent {
+                        amount
+                        currencyCode
+                    }
+                    addresses {
+                        address1
+                        address2
+                        city
+                        coordinatesValidated
+                        company
+                        country
+                        countryCode
+                        countryCodeV2
+                        firstName
+                        formattedArea
+                        id
+                        lastName
+                        latitude
+                        longitude
+                        name
+                        phone
+                        provinceCode
+                        province
+                        timeZone
+                        zip
+                    }
+                }
+                shippingLines(first: 20) {
+                    edges {
+                        node {
+                            taxLines {
+                                price
+                            }
+                            discountedPrice {
+                                amount
+                            }
+                        }
+                    }
+                }
+                currentTotalPriceSet {
+                    shopMoney {
+                        amount
+                        currencyCode
+                    }
+                }
+                paymentGatewayNames
+                tags
+                id
   }
 }
 `;
