@@ -35,7 +35,25 @@ export default class ProductService {
      * @returns Shopify Order Detail
      *
      */
-    static getOrderDetail(shopifyInstance: ShopifyUrlInstance, orderId: number): Promise<any>;
+    static getOrderDetail(shopifyInstance: ShopifyUrlInstance, orderId: number): Promise<{
+        gateway: any;
+        billingAddress: any;
+        shippingAddress: any;
+        lineItems: any;
+        taxLines: any;
+        id: any;
+        totalWeight: any;
+        financialStatus: any;
+        customer: any;
+        currentTotalPrice: any;
+        discountCodes: any;
+        paymentGatewayNames: any;
+        tags: any;
+        shippingLines: any;
+        taxesIncluded: any;
+        fulfillments: any;
+        cancelledAt: any;
+    }>;
     /**
      * Extract useful info from the address
      * @param addressObject

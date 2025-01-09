@@ -15,8 +15,13 @@ export const CANCEL_ORDER = `
         id
         status
       }
+      UserErrors {
+        field
+        message
+      }
     }
   }
+    
 `;
 
 export const CREATE_TRANSACTION = `
@@ -56,10 +61,13 @@ export const INVENTORY_UPDATE = `
         id
         available
       }
+      userErrors {
+        field
+        message
+      }
     }
   }
 `;
-
 
 export const MOVE_ORDER_FULFILLMENT_LOCATION_MUTATION = `mutation movefulfillmentOrderlocation($id: ID! , $wherehouseAssignedLocationId: ID!){
     fulfillmentOrderMove(id: $id, newLocationId: $wherehouseAssignedLocationId) {
@@ -76,8 +84,8 @@ export const MOVE_ORDER_FULFILLMENT_LOCATION_MUTATION = `mutation movefulfillmen
     }
       }
   `;
-  
-  export const CREATE_FULFILLMENT_MUTATION = `mutation createFulfillment($trackingNumber: String!, $trackingUrl: URL!, $trackingCompany: String!, $notifyCustomer: Boolean!, $fulfillmentOrderId: ID!) {
+
+export const CREATE_FULFILLMENT_MUTATION = `mutation createFulfillment($trackingNumber: String!, $trackingUrl: URL!, $trackingCompany: String!, $notifyCustomer: Boolean!, $fulfillmentOrderId: ID!) {
     fulfillmentCreate(fulfillment: {
       trackingInfo: {
         number: $trackingNumber,
@@ -101,8 +109,8 @@ export const MOVE_ORDER_FULFILLMENT_LOCATION_MUTATION = `mutation movefulfillmen
       }
     }
   }`;
-  
-  export const FULFILLMENT_MUTATION_WITH_MULTIPLE_TRACKING_URLS = `mutation createFulfillment(
+
+export const FULFILLMENT_MUTATION_WITH_MULTIPLE_TRACKING_URLS = `mutation createFulfillment(
     $trackingNumber: String!, 
     $trackingUrls: [String!]!, 
     $trackingCompany: String!, 
@@ -133,13 +141,9 @@ export const MOVE_ORDER_FULFILLMENT_LOCATION_MUTATION = `mutation movefulfillmen
       }
     }
   }`;
-  
-  export const WEBHOOK_MUTATION = ` mutation webhookSubscriptionCreate($topic: WebhookSubscriptionTopic!, $address: URL!) {
+
+export const WEBHOOK_MUTATION = ` mutation webhookSubscriptionCreate($topic: WebhookSubscriptionTopic!, $address: URL!) {
     webhookSubscriptionCreate(topic: $topic, webhookSubscription: {callbackUrl: $address, format: JSON}) {
-      userErrors {
-        field
-        message
-      }
       webhookSubscription {
         id
         topic
@@ -148,6 +152,10 @@ export const MOVE_ORDER_FULFILLMENT_LOCATION_MUTATION = `mutation movefulfillmen
         }
         format
         createdAt
+      }
+      userErrors {
+        field
+        message
       }
     }
   }

@@ -9,7 +9,9 @@ import {
 } from "../types/shopify";
 import {
   asyncDelay,
+  convertShopifyOrderToRestOrder,
   getShopifyBaseUrl,
+  transformDataToProductList,
 } from "../helpers";
 import {
   CANCEL_FULFILLMENT,
@@ -299,7 +301,10 @@ export default class ShopifyService {
     shopify: ShopifyUrlInstance,
     externalOrderId: string
   ) {
-    const shopifyOrderData = await this.getOrderData(shopify, externalOrderId);
+    const shopifyOrderData = await this.getOrderData(
+      shopify,
+      externalOrderId
+    );
 
     const wherehouseFulfillment = shopifyOrderData.fulfillments.filter(
       (fulfillment) => fulfillment.tracking_company === "Wherehouse"
@@ -325,10 +330,7 @@ export default class ShopifyService {
    * @param orderData
    * @param userId
    */
-  static async markCODOrderAsPaid(
-    externalOrderId: string,
-    userId: string,
-  ) {
+  static async markCODOrderAsPaid(externalOrderId: string, userId: string) {
     try {
       const shopify = await this.getShopifyUrlInstance(userId);
 
@@ -356,7 +358,7 @@ export default class ShopifyService {
    */
   static async getVariantHSNCodes(
     userId: string,
-    productIds: string[],
+    productIds: number[],
     limitOnError: boolean = false
   ): Promise<IHSNResponse[]> {
     try {
@@ -495,11 +497,13 @@ export default class ShopifyService {
         },
       });
 
+      const formattedOrder = convertShopifyOrderToRestOrder(data.data.order);
+
       return {
-        ...data.data.order,
+        ...formattedOrder,
         gateway:
           data.data.order.paymentGatewayNames &&
-          data.data.order.paymentGatewayNames.length > 0
+          data.data.order.paymenxtGatewayNames.length > 0
             ? data.data.order.paymentGatewayNames[0]
             : "",
       };
@@ -527,7 +531,16 @@ export default class ShopifyService {
         },
       });
 
-      return data.data.locations.nodes;
+      // here we need to change the graphql location id to numeric locationid
+      const formattedData = data.data.locations.nodes.map((location) => {
+        const updatedId = location.id.match(/\d+/);
+        return {
+          id: updatedId[0],
+          ...location,
+        };
+      });
+
+      return formattedData;
     } catch (e) {
       throw e;
     }
@@ -588,6 +601,11 @@ export default class ShopifyService {
       const url = `${baseUrl}/graphql.json`;
       logger.info(`Shopify call: [${url}]`);
 
+      const query = productIds
+        ?.split(",")
+        .map((id) => `id:${id.trim()}`)
+        .join(" OR ");
+
       const { data } = await axios({
         method: "POST",
         url,
@@ -596,12 +614,14 @@ export default class ShopifyService {
           "X-Shopify-Access-Token": shopify.password,
         },
         data: {
-          query: getProductsByIdsQuery(productIds),
+          query: getProductsByIdsQuery(query),
           variables: { limit: limitNumber },
         },
       });
 
-      return [{ ...data.data }];
+      const formattedData = transformDataToProductList(data.data)
+
+      return formattedData;
     } catch (e) {
       throw e;
     }
@@ -609,14 +629,14 @@ export default class ShopifyService {
 
   static async getProductData(
     shopify: ShopifyUrlInstance,
-    productId: string,
+    productId: number,
     fields?: string
   ) {
     try {
       // const { variants } = await shopify.product.get(Number(productId));
 
       const url = `${getShopifyBaseUrl(shopify)}/graphql.json`;
-      // const productID = `gid://shopify/Product/${productId}`;
+      const shopifyProductId = `gid://shopify/Product/${productId}`;
       const { data } = await axios({
         method: "POST",
         url,
@@ -626,7 +646,7 @@ export default class ShopifyService {
         },
         data: {
           query: GET_PRODUCT_DATA,
-          variables: { productId },
+          variables: { shopifyProductId },
         },
       });
       return data?.data?.product;
@@ -700,7 +720,7 @@ export default class ShopifyService {
 
   static async createTransactionAtShopify(
     shopify: ShopifyUrlInstance,
-    externalOrderId: string,
+    externalOrderId: string
   ) {
     try {
       // const createdTransactions = await this.createTransactionAtShopify(
@@ -798,3 +818,4 @@ setTimeout(async () => {
     logger.error(err);
   }
 }, 7 * 24 * 60 * 60);
+

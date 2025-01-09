@@ -8,6 +8,12 @@ query getOrderData($getOrderId: ID!) {
                 displayFinancialStatus
                 createdAt
                 updatedAt
+                cancelledAt
+                fulfillments {
+                trackingInfo {
+                  company
+                      }
+                   }
                 billingAddress {
                     address1
                     address2
@@ -203,17 +209,13 @@ export const GET_LOCATION_DATA = `
   }
 `;
 
-export function getProductsByIdsQuery(ids) {
+export function getProductsByIdsQuery(query) {
   return `query getProductsByIds($limit: Int!) {
-    ${ids
-      .map(
-        (id, index) => `
-      product${index}: product(id: "${id}") {
-        id
-        title
-        description
-        vendor
-        variants(first: $limit) {
+  products(query: "${query}", first: $limit) {
+    nodes {
+      id
+      title
+      variants(first: 250) {
           nodes {
             id
             inventoryItem {
@@ -221,16 +223,15 @@ export function getProductsByIdsQuery(ids) {
             }
           }
         }
-      }
-    `
-      )
-      .join("")}
-  }`;
+    }
+  }
+}
+  `;
 }
 
 export const GET_PRODUCT_DATA = `
-query getProductData($productId: ID!) {
-  product(id: $productId) {
+query getProductData($shopifyProductId: ID!) {
+  product(id: $shopifyProductId) {
     variants(first:10) {
       nodes {
         barcode

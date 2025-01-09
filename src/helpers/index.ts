@@ -81,3 +81,141 @@ export const getWebhookId = (shopType: SHOP_TYPE, req: any): string => {
   webhookId = req.headers[ShopTypeWebhookIdMap[shopType]].toString();
   return webhookId;
 };
+
+export const cleanShopifyIds = (data) => {
+  const extractNumericId = (value) => {
+    if (typeof value === "string" && value.startsWith("gid://shopify")) {
+      const match = value.match(/\d+/); // Extract numeric part
+      return match ? match[0] : value;
+    }
+    return value;
+  };
+
+  const traverseAndClean = (obj) => {
+    if (Array.isArray(obj)) {
+      return obj.map((item) => traverseAndClean(item));
+    } else if (typeof obj === "object" && obj !== null) {
+      return Object.keys(obj).reduce((acc, key) => {
+        acc[key] =
+          key === "createdAt" || key === "updatedAt"
+            ? obj[key]
+            : traverseAndClean(obj[key]);
+        return acc;
+      }, {});
+    } else if (typeof obj === "string") {
+      return extractNumericId(obj);
+    }
+    return obj;
+  };
+  return traverseAndClean(data);
+};
+
+// function to convert the graphql order object to rest order object
+
+const formattedOrderItem = (orderItems) => {
+  const resultedOrderItems = orderItems.map((itm) => {
+    const item = itm.node;
+    return {
+      ...item,
+      price: item.originalTotal,
+      variantId: item.variant.id,
+      productId: item.product.id,
+      gram: item.variant.weight,
+      discountAllocations: formattedDiscountAllocations(
+        item.discountAllocations
+      ),
+      taxLines: formattedTaxLines(item.taxLines),
+    };
+  });
+  return resultedOrderItems;
+};
+
+const formattedDiscountAllocations = (discountAllocations) => {
+  const resultedDiscountAllocations = discountAllocations.map((discount) => {
+    return {
+      ...discount,
+      amount: discount.allocatedAmount.amount,
+    };
+  });
+  return resultedDiscountAllocations;
+};
+
+const formattedShippingLines = (shippingLines) => {
+  const resultedShippingLines = shippingLines.map((s) => {
+    const shippingLine = s.node;
+    return {
+      ...shippingLine,
+      discountedPrice: shippingLine.discountedPrice.amount,
+    };
+  });
+  return resultedShippingLines;
+};
+
+const formattedTaxLines = (taxline) => {
+  const resultedTaxLines = taxline.map((tax) => {
+    return {
+      ...tax,
+      rate: tax.ratePercentage,
+    };
+  });
+  return resultedTaxLines;
+};
+
+const formattedFulfillments = (fulfillments) => {
+  console.log("fulfillments", fulfillments);
+  return fulfillments.map((fulfillment) => {
+    return {
+      ...fulfillment,
+      tracking_company: fulfillment.trackingInfo.company ?? " ",
+    };
+  });
+};
+
+const formattedPaymentTerms = (paymentTerms) => {
+  console.log("paymentTerms", paymentTerms);
+  return {
+    ...paymentTerms,
+    payment_term_name: paymentTerms.paymentTermsName,
+  };
+};
+
+export const convertShopifyOrderToRestOrder = (order: any) => {
+  // console.log("order", order)
+  return {
+    billingAddress: order.billingAddress,
+    shippingAddress: order.shippingAddress,
+    lineItems: formattedOrderItem(order.lineItems.edges),
+    taxLines: formattedTaxLines(order.taxLines),
+    id: order.id,
+    totalWeight: order.totalWeight,
+    financialStatus: order.displayFinancialStatus.toLowerCase(),
+    customer: order.customer,
+    currentTotalPrice: order.currentTotalPriceSet.shopMoney.amount,
+    discountCodes: order.discountCodes,
+    paymentGatewayNames: order.paymentGatewayNames,
+    tags: order.tags[0],
+    shippingLines: formattedShippingLines(order.shippingLines.edges),
+    taxesIncluded: order.taxesIncluded,
+    fulfillments: formattedFulfillments(order.fulfillments),
+    cancelledAt: order.cancelledAt,
+    // paymentTerms: formattedPaymentTerms(order.paymentTerms),
+  };
+};
+
+export  function transformDataToProductList(data) {
+  console.log(data);
+  if (!data?.products?.nodes) {
+    throw new Error("Invalid data structure: Missing products.nodes");
+  }
+  return data.products.nodes.map((product) => {
+    return {
+      id: product.id.match(/\d+/)[0],
+      title: product.title,
+      variants: product.variants.nodes.map((variant) => ({
+        id: variant.id.match(/\d+/)[0],
+        inventory_item_id: variant.inventoryItem.id.match(/\d+/)[0],
+      })),
+    };
+  });
+}
+

@@ -41,13 +41,31 @@ export default class ShopifyService {
      * @param limitOnError flag to decide whether to throw error or send whatever data collected so far
      * @returns array of object containing product id and variants array containing with id and hsn
      */
-    static getVariantHSNCodes(userId: string, productIds: string[], limitOnError?: boolean): Promise<IHSNResponse[]>;
+    static getVariantHSNCodes(userId: string, productIds: number[], limitOnError?: boolean): Promise<IHSNResponse[]>;
     static cancelFulfillmentApi(shopify: ShopifyUrlInstance, externalOrderId: string, wherehouseFulfillment: IOrderFulfillment): Promise<any>;
-    static getOrderData(shopify: ShopifyUrlInstance, externalOrderId: string): Promise<any>;
+    static getOrderData(shopify: ShopifyUrlInstance, externalOrderId: string): Promise<{
+        gateway: any;
+        billingAddress: any;
+        shippingAddress: any;
+        lineItems: any;
+        taxLines: any;
+        id: any;
+        totalWeight: any;
+        financialStatus: any;
+        customer: any;
+        currentTotalPrice: any;
+        discountCodes: any;
+        paymentGatewayNames: any;
+        tags: any;
+        shippingLines: any;
+        taxesIncluded: any;
+        fulfillments: any;
+        cancelledAt: any;
+    }>;
     static getLocationData(shopify: ShopifyUrlInstance): Promise<any>;
     static cancelOrderApi(shopify: ShopifyUrlInstance, externalOrderId: string): Promise<any>;
-    static getAllProductList(shopify: ShopifyUrlInstance, limitNumber: number, productIds?: string): Promise<any[]>;
-    static getProductData(shopify: ShopifyUrlInstance, productId: string, fields?: string): Promise<any>;
+    static getAllProductList(shopify: ShopifyUrlInstance, limitNumber: number, productIds?: string): Promise<any>;
+    static getProductData(shopify: ShopifyUrlInstance, productId: number, fields?: string): Promise<any>;
     static getInventoryItemData(shopify: ShopifyUrlInstance, inventoryItemId: string): Promise<any>;
     static getAccessScopeData(shopify: ShopifyUrlInstance): Promise<any>;
     static createTransactionAtShopify(shopify: ShopifyUrlInstance, externalOrderId: string): Promise<any>;
