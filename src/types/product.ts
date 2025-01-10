@@ -35,10 +35,10 @@ export enum PRODUCT_TYPE {
 }
 
 export enum SHOPIFY_WEIGHT_UNITS {
-  GRAMS = "GRAMS",
-  KILOGRAMS = "KILOGRAMS",
-  OUNCES = "OUNCES",
-  POUNDS = "POUNDS",
+  GRAMS = "g",
+  KILOGRAMS = "kg",
+  OUNCES = "oz",
+  POUNDS = "lb",
 }
 
 export enum SHOPIFY_PRODUCT_STATUS {
