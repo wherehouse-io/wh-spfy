@@ -53,9 +53,9 @@ export default class ProductService {
     const products: IProduct[] = [];
     const { variants, images, title, handle, status, productType } = body;
     // TODO: add HSN code
-    variants?.forEach((v: any) => {
+    variants?.forEach((variant: any) => {
       let variantItem: IProduct;
-      const variant = v.node;
+  
       variantItem = {
         _id: productId,
         variantId: variant.id.toString(),
