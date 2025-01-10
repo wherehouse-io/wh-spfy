@@ -13,12 +13,17 @@ export const CANCEL_FULFILLMENT = `mutation cancelFulfillment($fulfillmentId: ID
 `;
 
 export const CANCEL_ORDER = `
-  mutation cancelOrder($orderId: ID!) {
-    orderCancel(id: $orderId) {
-      order {
+mutation cancelOrder($orderId: ID!,$reason: OrderCancelReason!, $refund: Boolean!, $restock: Boolean!) {
+    orderCancel(orderId: $orderId,reason: $reason, refund: $refund, restock: $restock) {
+       job{
+        done,
         id
-        status
-      }
+       }
+       orderCancelUserErrors{
+        code
+        field
+        message
+       }
       userErrors {
         field
         message
@@ -51,7 +56,7 @@ export const CREATE_TRANSACTION = `
 `;
 
 export const INVENTORY_UPDATE = `
-  mutation inventoryUpdateAtShopifyForRTO($available_adjustment: Int!, $location_id:number!,$name:String!, $reason: String!,$inventory_item_id:ID!) {
+  mutation inventoryUpdateAtShopifyForRTO($available_adjustment: Int!, $location_id:ID!,$name:String!, $reason: String!,$inventory_item_id:ID!) {
     inventoryAdjustQuantities(input:  {
      reason: $reason,
      name: $name, 
@@ -116,7 +121,7 @@ export const CREATE_FULFILLMENT_MUTATION = `mutation createFulfillment($tracking
 
 export const FULFILLMENT_MUTATION_WITH_MULTIPLE_TRACKING_URLS = `mutation createFulfillment(
     $trackingNumber: String!, 
-    $trackingUrls: [String!]!, 
+    $trackingUrls: [URL!]!, 
     $trackingCompany: String!, 
     $notifyCustomer: Boolean!, 
     $fulfillmentOrderId: ID!

@@ -171,6 +171,7 @@ export default class FulfillmentService {
 
       const url = `${getShopifyBaseUrl(shopify)}/graphql.json`;
       logger.info(`Shopify call: [${url}]`);
+      const id = `gid://shopify/FulfillmentOrder/${externalOrderId}`
 
       const { data } = await axios({
         method: "POST",
@@ -182,7 +183,7 @@ export default class FulfillmentService {
             trackingUrls: fulfillmentDetails.tracking_urls,
             trackingCompany: fulfillmentDetails.tracking_company,
             notifyCustomer: fulfillmentDetails.notify_customer,
-            fulfillmentOrderId: externalOrderId,
+            fulfillmentOrderId: id,
           },
         },
         headers: {
@@ -253,7 +254,7 @@ export default class FulfillmentService {
 
         const assignedLocationId =
           fulfillmentOrderItem.assignedLocation.location.id;
-        const wherehouseAssignedLocationId = fulfillmentDetails.location_id;
+        const wherehouseAssignedLocationId =  `gid://shopify/Location/${fulfillmentDetails.location_id}`;
         logger.info(
           `!!!!!!!!!!!assignedLocationId and wherehouseAssignedLocationId!!!!!!!!${assignedLocationId} and ${wherehouseAssignedLocationId}`
         );

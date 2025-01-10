@@ -448,7 +448,7 @@ export default class ShopifyService {
       //   wherehouseFulfillment.id
       // }/cancel.json`;
 
-      const fulfillmentId = wherehouseFulfillment.id;
+      const fulfillmentId = `gid://shopify/Fulfillment/${wherehouseFulfillment.id}`;
 
       logger.info(`Shopify call: [${url}]`);
 
@@ -466,7 +466,9 @@ export default class ShopifyService {
       });
 
       if (data.errors) {
-        throw new Error(`GraphQL errors At Cancel Fulfillment: ${JSON.stringify(data.errors)}`);
+        throw new Error(
+          `GraphQL errors At Cancel Fulfillment: ${JSON.stringify(data.errors)}`
+        );
       }
 
       return data.data.fulfillmentCancel.fulfillment;
@@ -557,7 +559,10 @@ export default class ShopifyService {
       const url = `${getShopifyBaseUrl(shopify)}/graphql.json`;
       logger.info(`Shopify call: [${url}]`);
 
-      const cancelOrderId = `gid://shopify/Order/${externalOrderId}`;
+      const orderId = `gid://shopify/Order/${externalOrderId}`;
+      const reason = "OTHER";
+      const restock = false;
+      const refund = false;
 
       const { data } = await axios({
         method: "POST",
@@ -568,15 +573,17 @@ export default class ShopifyService {
         },
         data: {
           query: CANCEL_ORDER,
-          variables: { cancelOrderId },
+          variables: { orderId, reason, refund, restock },
         },
       });
 
       if (data.errors) {
-        throw new Error(`GraphQL errors At Cancel Order: ${JSON.stringify(data.errors)}`);
+        throw new Error(
+          `GraphQL errors At Cancel Order: ${JSON.stringify(data.errors)}`
+        );
       }
 
-      return data.data.order;
+      return !data.data.orderCancel.job.done;
     } catch (e) {
       throw e;
     }
@@ -738,7 +745,7 @@ export default class ShopifyService {
       const url = `${getShopifyBaseUrl(shopify)}/graphql.json`;
       logger.info(`Shopify call: [${url}]`);
       const orderId = `gid://shopify/Order/${externalOrderId}`;
-      const amount = 100;
+      const amount = 100; 
 
       const { data } = await axios({
         method: "POST",
@@ -798,10 +805,10 @@ export default class ShopifyService {
           query: INVENTORY_UPDATE,
           variables: {
             available_adjustment: inventoryUpdateObject.available_adjustment,
-            location_id: inventoryUpdateObject.location_id,
+            location_id: `gid://shopify/Location/${inventoryUpdateObject.location_id}`,
             name: "available",
             reason: "correction",
-            inventory_item_id: inventoryUpdateObject.inventory_item_id,
+            inventory_item_id: `gid://shopify/InventoryItem/${inventoryUpdateObject.inventory_item_id}`,
           },
         },
         headers: {

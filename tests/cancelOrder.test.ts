@@ -18,7 +18,7 @@ describe("cancelOrder", () => {
     );
 
     const mockCancelOrder = jest.spyOn(ShopifyService, "cancelOrder");
-    mockCancelOrder.mockResolvedValue({} as IOrder);
+    mockCancelOrder.mockResolvedValue(true);
 
     const orderId = "4b5ab279-66fb-45ad-98e5-63b330f44492";
     const responseCancelOrder = await ShopifyService.cancelOrder(

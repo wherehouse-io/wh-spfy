@@ -286,7 +286,7 @@ query {
 
 export const GET_FULFILLMENT_ORDER_QUERY = `query getOrderData($getFulfillmentOrderId: ID!) {
     order(id: $getFulfillmentOrderId) {
-       fulfillmentOrders(first:10) {
+       fulfillmentOrders(first:250) {
            nodes {
              id
              assignedLocation {
