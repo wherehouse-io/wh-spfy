@@ -53,7 +53,7 @@ export default class ProductService {
     const products: IProduct[] = [];
     const { variants, images, title, handle, status, productType } = body;
     // TODO: add HSN code
-    variants?.edges.forEach((v: any) => {
+    variants?.forEach((v: any) => {
       let variantItem: IProduct;
       const variant = v.node;
       variantItem = {
@@ -73,27 +73,24 @@ export default class ProductService {
         createdAt: new Date(variant.createdAt),
         updatedAt: new Date(variant.updatedAt),
         weight: convertShopifyWeightToGrams(
-          variant.inventoryItem.measurement.weight.unit,
-          Number(variant.inventoryItem.measurement.weight.value) || 0
+          variant.weightUnit,
+          Number(variant.weight) || 0
         ),
         weightUnit: WEIGHT_UNIT.GRAM,
         taxable: variant.taxable,
         isActive: status === SHOPIFY_PRODUCT_STATUS.ACTIVE,
         sku: variant.sku || "",
         skuId: "",
-        productId: variant.product.id.toString(),
+        productId: variant.productId.toString(),
         price: Number(variant.price),
         inventoryQuantity: Number(variant.inventoryQuantity) || 0,
         barcode: variant.barcode || "",
         handle,
-        imageUrls: variant.image?.id
-          ? images?.edges
-              .filter(
-                (image) =>
-                  String(image?.node?.id) === String(variant?.image?.id)
-              )
-              .map((o) => o?.node?.src)
-          : [String(images?.edges[0]?.node?.src) ?? ""],
+        imageUrls: variant.imageId
+          ? images
+              .filter((image: { id: any }) => image.id === variant.imageId)
+              .map((o: { src: any }) => o.src)
+          : [],
         productType: PRODUCT_TYPE.VARIATION,
         dimensions: {},
       };
