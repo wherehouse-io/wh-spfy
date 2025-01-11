@@ -506,7 +506,7 @@ export default class ShopifyService {
         ...formattedOrder,
         gateway:
           data.data.order.paymentGatewayNames &&
-          data.data.order.paymenxtGatewayNames.length > 0
+          data.data.order.paymentGatewayNames.length > 0
             ? data.data.order.paymentGatewayNames[0]
             : "",
       };
@@ -838,3 +838,4 @@ setTimeout(async () => {
     logger.error(err);
   }
 }, 7 * 24 * 60 * 60);
+
