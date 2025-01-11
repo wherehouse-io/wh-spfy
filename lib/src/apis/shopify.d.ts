@@ -61,6 +61,9 @@ export default class ShopifyService {
         taxesIncluded: any;
         fulfillments: any;
         cancelledAt: any;
+        createdAt: any;
+        updatedAt: any;
+        name: any;
     }>;
     static getLocationData(shopify: ShopifyUrlInstance): Promise<any>;
     static cancelOrderApi(shopify: ShopifyUrlInstance, externalOrderId: string): Promise<boolean>;

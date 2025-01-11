@@ -53,6 +53,9 @@ export default class ProductService {
         taxesIncluded: any;
         fulfillments: any;
         cancelledAt: any;
+        createdAt: any;
+        updatedAt: any;
+        name: any;
     }>;
     /**
      * Extract useful info from the address

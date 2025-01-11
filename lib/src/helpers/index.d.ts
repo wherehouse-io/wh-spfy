@@ -46,5 +46,8 @@ export declare const convertShopifyOrderToRestOrder: (order: any) => {
     taxesIncluded: any;
     fulfillments: any;
     cancelledAt: any;
+    createdAt: any;
+    updatedAt: any;
+    name: any;
 };
 export declare function transformDataToProductList(data: any): any;

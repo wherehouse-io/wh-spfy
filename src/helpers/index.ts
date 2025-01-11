@@ -198,6 +198,9 @@ export const convertShopifyOrderToRestOrder = (order: any) => {
     taxesIncluded: order.taxesIncluded,
     fulfillments: formattedFulfillments(order.fulfillments),
     cancelledAt: order.cancelledAt,
+    createdAt: order.createdAt,
+    updatedAt: order.updatedAt,
+    name : order.name
     // paymentTerms: formattedPaymentTerms(order.paymentTerms),
   };
 };
