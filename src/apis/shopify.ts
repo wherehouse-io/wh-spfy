@@ -9,6 +9,7 @@ import {
 } from "../types/shopify";
 import {
   asyncDelay,
+  cleanShopifyIds,
   convertShopifyOrderToRestOrder,
   getShopifyBaseUrl,
   transformDataToProductList,
@@ -501,9 +502,10 @@ export default class ShopifyService {
       });
 
       const formattedOrder = convertShopifyOrderToRestOrder(data.data.order);
+      const cleanIdOrder = cleanShopifyIds(formattedOrder)
 
       return {
-        ...formattedOrder,
+        ...cleanIdOrder,
         gateway:
           data.data.order.paymentGatewayNames &&
           data.data.order.paymentGatewayNames.length > 0
