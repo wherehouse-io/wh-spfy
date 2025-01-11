@@ -120,7 +120,7 @@ const formattedOrderItem = (orderItems) => {
       price: item.originalTotal,
       variantId: item.variant.id,
       productId: item.product.id,
-      gram: item.variant.weight,
+      grams: item.variant.weight,
       discountAllocations: formattedDiscountAllocations(
         item.discountAllocations
       ),
@@ -202,7 +202,7 @@ export const convertShopifyOrderToRestOrder = (order: any) => {
   };
 };
 
-export  function transformDataToProductList(data) {
+export function transformDataToProductList(data) {
   console.log(data);
   if (!data?.products?.nodes) {
     throw new Error("Invalid data structure: Missing products.nodes");
@@ -218,4 +218,3 @@ export  function transformDataToProductList(data) {
     };
   });
 }
-

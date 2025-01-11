@@ -8,6 +8,12 @@ query getOrderData($getOrderId: ID!) {
                 displayFinancialStatus
                 createdAt
                 updatedAt
+                cancelledAt
+                fulfillments {
+                  trackingInfo {
+                    company
+                  }
+                }
                 billingAddress {
                     address1
                     address2
@@ -187,8 +193,6 @@ query getOrderData($getOrderId: ID!) {
                 id
             }
         }
-    }
-}
 `;
 
 export const GET_LOCATION_DATA = `
