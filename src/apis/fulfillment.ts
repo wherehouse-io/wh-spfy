@@ -82,7 +82,7 @@ export default class FulfillmentService {
     if (existingFulfillment.length > 0) {
       const notCancelledFulfillment = existingFulfillment.filter(
         (fulfillment) =>
-          fulfillment.status !== EShopifyFulfillmentStatus.CANCELLED
+          fulfillment.status.toLowerCase() !== EShopifyFulfillmentStatus.CANCELLED
       );
 
       if (notCancelledFulfillment.length === 0) {
