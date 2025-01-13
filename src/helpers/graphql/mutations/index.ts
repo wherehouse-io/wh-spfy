@@ -80,11 +80,17 @@ export const INVENTORY_UPDATE = `
 
 export const MOVE_ORDER_FULFILLMENT_LOCATION_MUTATION = `mutation movefulfillmentOrderlocation($id: ID! , $wherehouseAssignedLocationId: ID!){
     fulfillmentOrderMove(id: $id, newLocationId: $wherehouseAssignedLocationId) {
-      movedFulfillmentOrder {
+        movedFulfillmentOrder {
         id
-        assignedLocation {
-          id
-        }
+        status
+      }
+      originalFulfillmentOrder {
+        id
+        status
+      }
+      remainingFulfillmentOrder {
+        id
+        status
       }
       userErrors {
         field
@@ -109,9 +115,36 @@ export const CREATE_FULFILLMENT_MUTATION = `mutation createFulfillment($tracking
       ]
     }) {
       fulfillment {
+      createdAt
+      displayStatus
+      id
+      name
+      location {
+        isActive
         id
-        status
+        createdAt
+        address {
+          address1
+          address2
+          city
+          country
+          phone
+          zip
+          latitude
+          longitude
+        }
+        name
       }
+      status
+      totalQuantity
+      trackingInfo {
+        company
+        number
+        url
+      }
+      updatedAt
+      requiresShipping
+    }
       userErrors {
         field
         message
@@ -151,7 +184,7 @@ export const FULFILLMENT_MUTATION_WITH_MULTIPLE_TRACKING_URLS = `mutation create
     }
   }`;
 
-export const WEBHOOK_MUTATION = ` mutation webhookSubscriptionCreate($topic: WebhookSubscriptionTopic!, $address: URL!) {
+export const WEBHOOK_MUTATION = `mutation webhookSubscriptionCreate($topic: WebhookSubscriptionTopic!, $address: URL!) {
     webhookSubscriptionCreate(topic: $topic, webhookSubscription: {callbackUrl: $address, format: JSON}) {
       webhookSubscription {
         id

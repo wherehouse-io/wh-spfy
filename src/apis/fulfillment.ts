@@ -171,7 +171,7 @@ export default class FulfillmentService {
 
       const url = `${getShopifyBaseUrl(shopify)}/graphql.json`;
       logger.info(`Shopify call: [${url}]`);
-      const id = `gid://shopify/FulfillmentOrder/${externalOrderId}`
+      const id = `gid://shopify/FulfillmentOrder/${externalOrderId}`;
 
       const { data } = await axios({
         method: "POST",
@@ -245,7 +245,7 @@ export default class FulfillmentService {
           `!!!!!!!Started For Fulfillment Order!!!!!!!! ${fulfillmentOrderItem.id}`
         );
 
-        if (fulfillmentOrderItem.status === "closed") {
+        if (fulfillmentOrderItem.status.toLowerCase() === "closed") {
           logger.warn(
             `skipping this fulfillment order(${fulfillmentOrderItem.id}) since status is closed!`
           );
@@ -254,7 +254,7 @@ export default class FulfillmentService {
 
         const assignedLocationId =
           fulfillmentOrderItem.assignedLocation.location.id;
-        const wherehouseAssignedLocationId =  `gid://shopify/Location/${fulfillmentDetails.location_id}`;
+        const wherehouseAssignedLocationId = `gid://shopify/Location/${fulfillmentDetails.location_id}`;
         logger.info(
           `!!!!!!!!!!!assignedLocationId and wherehouseAssignedLocationId!!!!!!!!${assignedLocationId} and ${wherehouseAssignedLocationId}`
         );
@@ -289,18 +289,15 @@ export default class FulfillmentService {
 
           // IF fulfillment order location is moved successFully then push it into updated fulfillment order array with updated location id
           // If this fulfillment order location is not moved then will not be pushed so fulfillment twill not be created for that order
-          const movedOrder =
-            moveLocationData.data.fulfillmentOrderMove.movedFulfillmentOrder;
-          if (movedOrder) {
-            updatedFulfillmentOrder.push({
-              ...fulfillmentOrderItem,
-              "assignedLocation.location.id": wherehouseAssignedLocationId,
-            });
-          } else {
-            updatedFulfillmentOrder.push(fulfillmentOrderItem);
-          }
+          updatedFulfillmentOrder.push({
+            ...fulfillmentOrderItem,
+            assigned_location_id: !moveLocationData?.data?.fulfillmentOrderMove
+              ?.originalFulfillmentOrder
+              ? fulfillmentOrderItem.assignedLocation.location.id
+              : wherehouseAssignedLocationId,
+          });
         } else {
-          updatedFulfillmentOrder.push(fulfillmentOrderItem);
+          updatedFulfillmentOrder.push({ ...fulfillmentOrderItem });
         }
       }
 
@@ -336,7 +333,7 @@ export default class FulfillmentService {
           );
         }
 
-        createdFulfillmentResponse.push(data);
+        createdFulfillmentResponse.push(data.data.fulfillmentCreate.fulfillment);
       }
       return createdFulfillmentResponse;
     } catch (e) {
