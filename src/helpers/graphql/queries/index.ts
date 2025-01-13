@@ -293,6 +293,7 @@ export const GET_FULFILLMENT_ORDER_QUERY = `query getOrderData($getFulfillmentOr
        fulfillmentOrders(first:250) {
            nodes {
              id
+             status
              assignedLocation {
              location {
                id
