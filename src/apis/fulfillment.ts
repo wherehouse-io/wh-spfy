@@ -254,7 +254,7 @@ export default class FulfillmentService {
 
         const assignedLocationId =
           fulfillmentOrderItem.assignedLocation.location.id;
-        const wherehouseAssignedLocationId = `gid://shopify/Location/${fulfillmentDetails.location_id}`;
+        const wherehouseAssignedLocationId = fulfillmentDetails.location_id
         logger.info(
           `!!!!!!!!!!!assignedLocationId and wherehouseAssignedLocationId!!!!!!!!${assignedLocationId} and ${wherehouseAssignedLocationId}`
         );
