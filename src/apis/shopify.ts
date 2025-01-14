@@ -522,7 +522,7 @@ export default class ShopifyService {
     try {
       // return shopifyRef.location.list();
       // locations
-      const url = `${getShopifyBaseUrl(shopify)}/graph.json`;
+      const url = `${getShopifyBaseUrl(shopify)}/graphql.json`;
       logger.info(`Shopify call: [${url}]`);
 
       const { data } = await axios({
