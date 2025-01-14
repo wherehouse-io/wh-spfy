@@ -317,3 +317,11 @@ export const GET_FULFILLMENT_LIST_COUNT_QUERY = `
    }
      }
    `;
+
+export const CHECK_ORDER_CANCEL_STATUS = `
+  query checkOrderCancelStatus($jobId: ID!) {
+        job(id: $jobId) {
+          id
+          done
+        }
+}`;

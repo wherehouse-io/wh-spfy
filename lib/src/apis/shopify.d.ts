@@ -19,7 +19,7 @@ export default class ShopifyService {
      * @param userId
      */
     static cancelOrderOnShopify(externalOrderId: string, userId: string): Promise<any>;
-    static cancelOrder(shopify: ShopifyUrlInstance, externalOrderId: string): Promise<boolean>;
+    static cancelOrder(shopify: ShopifyUrlInstance, externalOrderId: string): Promise<any>;
     /**
      * @description function to cancel order fulfillment on shopify
      * @param orderData
@@ -45,7 +45,7 @@ export default class ShopifyService {
     static cancelFulfillmentApi(shopify: ShopifyUrlInstance, externalOrderId: string, wherehouseFulfillment: IOrderFulfillment): Promise<any>;
     static getOrderData(shopify: ShopifyUrlInstance, externalOrderId: string): Promise<any>;
     static getLocationData(shopify: ShopifyUrlInstance): Promise<any>;
-    static cancelOrderApi(shopify: ShopifyUrlInstance, externalOrderId: string): Promise<boolean>;
+    static cancelOrderApi(shopify: ShopifyUrlInstance, externalOrderId: string): Promise<any>;
     static getAllProductList(shopify: ShopifyUrlInstance, limitNumber: number, productIds?: string): Promise<any>;
     static getProductData(shopify: ShopifyUrlInstance, productId: number, fields?: string): Promise<any>;
     static getInventoryItemData(shopify: ShopifyUrlInstance, inventoryItemId: string): Promise<any>;

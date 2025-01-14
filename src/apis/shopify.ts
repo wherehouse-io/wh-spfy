@@ -21,6 +21,7 @@ import {
   INVENTORY_UPDATE,
 } from "../helpers/graphql/mutations";
 import {
+  CHECK_ORDER_CANCEL_STATUS,
   GET_ACCESS_SCOPE_DATA,
   GET_INVENTORY_ITEM_DATA,
   GET_LOCATION_DATA,
@@ -502,7 +503,7 @@ export default class ShopifyService {
       });
 
       const formattedOrder = convertShopifyOrderToRestOrder(data.data.order);
-      const cleanIdOrder = cleanShopifyIds(formattedOrder)
+      const cleanIdOrder = cleanShopifyIds(formattedOrder);
 
       return {
         ...cleanIdOrder,
@@ -585,7 +586,22 @@ export default class ShopifyService {
         );
       }
 
-      return !data.data.orderCancel.job.done;
+      const jobId = data.data.orderCancel.job.id;
+      //   query to check the order is cancelled or not
+      const cancelOrderStatusData = await axios({
+        method: "POST",
+        url,
+        headers: {
+          "Content-Type": " application/json",
+          "X-Shopify-Access-Token": shopify.password,
+        },
+        data: {
+          query: CHECK_ORDER_CANCEL_STATUS,
+          variables: { jobId },
+        },
+      });
+      
+      return cancelOrderStatusData.data.data.job.done;
     } catch (e) {
       throw e;
     }
@@ -747,7 +763,7 @@ export default class ShopifyService {
       const url = `${getShopifyBaseUrl(shopify)}/graphql.json`;
       logger.info(`Shopify call: [${url}]`);
       const orderId = `gid://shopify/Order/${externalOrderId}`;
-      const amount = 100; 
+      const amount = 100;
 
       const { data } = await axios({
         method: "POST",
@@ -840,4 +856,3 @@ setTimeout(async () => {
     logger.error(err);
   }
 }, 7 * 24 * 60 * 60);
-
