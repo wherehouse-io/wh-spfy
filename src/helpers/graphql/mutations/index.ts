@@ -66,10 +66,15 @@ export const INVENTORY_UPDATE = `
      locationId: $location_id
      }
     }) {
-      inventoryLevel {
-        id
-        available
+        inventoryAdjustmentGroup {
+      createdAt
+      reason
+      referenceDocumentUri
+      changes {
+        name
+        delta
       }
+    }  
       userErrors {
         field
         message
