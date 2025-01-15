@@ -212,9 +212,11 @@ export function transformDataToProductList(data) {
   }
   return data.products.nodes.map((product) => {
     return {
+      ...product,
       id: product.id.match(/\d+/)[0],
       title: product.title,
       variants: product.variants.nodes.map((variant) => ({
+        ...variant,
         id: variant.id.match(/\d+/)[0],
         inventory_item_id: variant.inventoryItem.id.match(/\d+/)[0],
       })),

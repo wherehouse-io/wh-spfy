@@ -823,7 +823,7 @@ export default class ShopifyService {
           query: INVENTORY_UPDATE,
           variables: {
             available_adjustment: inventoryUpdateObject.available_adjustment,
-            location_id: `gid://shopify/Location/${inventoryUpdateObject.location_id}`,
+            location_id: inventoryUpdateObject.location_id,
             name: "available",
             reason: "correction",
             inventory_item_id: `gid://shopify/InventoryItem/${inventoryUpdateObject.inventory_item_id}`,
