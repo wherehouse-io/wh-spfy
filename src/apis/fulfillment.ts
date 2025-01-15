@@ -217,7 +217,7 @@ export default class FulfillmentService {
       const url = `${shopifyBaseURl}/graphql.json`;
 
       logger.info(`Shopify call for fulfillment orders: [${url}]`);
-      const getFulfillmentOrderId = `gid://shopify/Order/${externalOrderId}`;
+      const fulfillmentOrderId = `gid://shopify/Order/${externalOrderId}`;
       const { data: fulfillmentOrderData } = await axios({
         method: "POST",
         url: url,
@@ -227,7 +227,7 @@ export default class FulfillmentService {
         },
         data: {
           query: GET_FULFILLMENT_ORDER_QUERY,
-          variables: { getFulfillmentOrderId },
+          variables: { fulfillmentOrderId },
         },
       });
 

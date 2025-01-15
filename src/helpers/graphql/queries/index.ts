@@ -288,8 +288,8 @@ query {
       }
 `;
 
-export const GET_FULFILLMENT_ORDER_QUERY = `query getOrderData($getFulfillmentOrderId: ID!) {
-    order(id: $getFulfillmentOrderId) {
+export const GET_FULFILLMENT_ORDER_QUERY = `query getOrderData($fulfillmentOrderId: ID!) {
+    order(id: $fulfillmentOrderId) {
        fulfillmentOrders(first:250) {
            nodes {
              id
