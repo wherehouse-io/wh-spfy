@@ -82,7 +82,8 @@ export default class FulfillmentService {
     if (existingFulfillment.length > 0) {
       const notCancelledFulfillment = existingFulfillment.filter(
         (fulfillment) =>
-          fulfillment.status.toLowerCase() !== EShopifyFulfillmentStatus.CANCELLED
+          fulfillment.status.toLowerCase() !==
+          EShopifyFulfillmentStatus.CANCELLED
       );
 
       if (notCancelledFulfillment.length === 0) {
@@ -233,6 +234,7 @@ export default class FulfillmentService {
 
       if (!fulfillmentOrderData.data.order.fulfillmentOrders.nodes.length) {
         // throw new Error("Fulfillment Order Is Not Found");
+        logger.error(`Fulfillment Order Is Not Found`);
         throw new Error("Permission disabled for new fulfillment flow");
       }
 
@@ -254,7 +256,7 @@ export default class FulfillmentService {
 
         const assignedLocationId =
           fulfillmentOrderItem.assignedLocation.location.id;
-        const wherehouseAssignedLocationId = fulfillmentDetails.location_id
+        const wherehouseAssignedLocationId = fulfillmentDetails.location_id;
         logger.info(
           `!!!!!!!!!!!assignedLocationId and wherehouseAssignedLocationId!!!!!!!!${assignedLocationId} and ${wherehouseAssignedLocationId}`
         );
@@ -333,7 +335,9 @@ export default class FulfillmentService {
           );
         }
 
-        createdFulfillmentResponse.push(data.data.fulfillmentCreate.fulfillment);
+        createdFulfillmentResponse.push(
+          data.data.fulfillmentCreate.fulfillment
+        );
       }
       return createdFulfillmentResponse;
     } catch (e) {
