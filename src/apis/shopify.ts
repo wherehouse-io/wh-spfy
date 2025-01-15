@@ -841,7 +841,7 @@ export default class ShopifyService {
         );
       }
 
-      return data.data.inventoryLevel;
+      return data?.data?.inventoryAdjustQuantities;
     } catch (e) {
       logger.error(e);
       throw e;
