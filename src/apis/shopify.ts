@@ -17,8 +17,8 @@ import {
 import {
   CANCEL_FULFILLMENT,
   CANCEL_ORDER,
-  CREATE_TRANSACTION,
   INVENTORY_UPDATE,
+  MARK_COD_ORDER_AS_PAID,
 } from "../helpers/graphql/mutations";
 import {
   CHECK_ORDER_CANCEL_STATUS,
@@ -600,7 +600,7 @@ export default class ShopifyService {
           variables: { jobId },
         },
       });
-      
+
       return cancelOrderStatusData.data.data.job.done;
     } catch (e) {
       throw e;
@@ -763,18 +763,15 @@ export default class ShopifyService {
       const url = `${getShopifyBaseUrl(shopify)}/graphql.json`;
       logger.info(`Shopify call: [${url}]`);
       const orderId = `gid://shopify/Order/${externalOrderId}`;
-      const amount = 100;
 
       const { data } = await axios({
         method: "POST",
         url,
         data: {
-          query: CREATE_TRANSACTION,
+          query: MARK_COD_ORDER_AS_PAID,
           variables: {
             input: {
-              orderId: orderId,
-              amount,
-              parentTransactionId: null,
+              id: orderId,
             },
           },
         },
@@ -792,12 +789,12 @@ export default class ShopifyService {
         );
       }
 
-      const transaction = data.data.orderCapture.transaction;
-      if (!transaction) {
-        throw new Error("Transaction creation failed");
+      const markCodOrderAsPaidData = data.data.orderMarkAsPaid.order;
+      if (markCodOrderAsPaidData.displayFinancialStatus !== "PAID") {
+        throw new Error("mark cod order as paid failed");
       }
 
-      return data.data.transaction;
+      return markCodOrderAsPaidData;
     } catch (e) {
       throw e;
     }

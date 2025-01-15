@@ -33,26 +33,20 @@ mutation cancelOrder($orderId: ID!,$reason: OrderCancelReason!, $refund: Boolean
     
 `;
 
-export const CREATE_TRANSACTION = `
-  mutation createTransaction($externalOrderId: ID!, $amount: Money!, $parentTransactionId: ID!) {
-   orderCapture(
-      input: {
-        id: $externalOrderId
-        amount: $amount
-        kind: SALE
-        parentTransactionId : $parentTransactionId
-      }
-    ) {
-      transaction {
-        id
-        status
-      }
-      userErrors {
-        field
-        message
-      }
+export const MARK_COD_ORDER_AS_PAID = `
+  mutation orderMarkAsPaid($input: OrderMarkAsPaidInput!) {
+  orderMarkAsPaid(input: $input) {
+    order {
+      id
+     displayFinancialStatus
+
+    }
+    userErrors {
+      field
+      message
     }
   }
+}
 `;
 
 export const INVENTORY_UPDATE = `
