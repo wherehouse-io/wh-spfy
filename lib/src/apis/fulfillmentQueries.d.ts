@@ -1,0 +1,2 @@
+export declare const GET_FULFILLMENT_ORDER_QUERY = "query getOrderData($getFulfillmentOrderId: ID!) {\n order(id: $getFulfillmentOrderId) {\n    fulfillmentOrders(first:10) {\n        nodes {\n          id\n          assignedLocation {\n          location {\n            id\n          }\n        }\n        }\n      }\n  }\n }\n";
+export declare const GET_FULFILLMENT_LIST_COUNT_QUERY = "\n  query getFulfillmentListCount($fulfillmentId: ID!) {\n   order(id: $fulfillmentId) {\n  fulfillments {\n    status\n    trackingInfo {\n      company\n    }\n  }\n}\n  }\n";

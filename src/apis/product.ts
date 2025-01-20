@@ -53,8 +53,9 @@ export default class ProductService {
     const products: IProduct[] = [];
     const { variants, images, title, handle, status, productType } = body;
     // TODO: add HSN code
-    variants.forEach((variant: any) => {
+    variants?.forEach((variant: any) => {
       let variantItem: IProduct;
+  
       variantItem = {
         _id: productId,
         variantId: variant.id.toString(),
@@ -172,7 +173,7 @@ export default class ProductService {
         //   ...params,
         //   fields: `id,variants,images,title,handle,status,productType`,
         // });
-        const products = await ShopifyService.getAllProductList(
+        const products: any = await ShopifyService.getAllProductList(
           shopifyInstance,
           params.limit
         );

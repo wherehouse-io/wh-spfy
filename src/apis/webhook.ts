@@ -1,6 +1,7 @@
 import axios from "axios";
 import { getShopifyBaseUrl } from "../helpers";
 import { logger } from "../logger";
+import { WEBHOOK_MUTATION } from "../helpers/graphql/mutations";
 
 export default class WebhookService {
   static async registerWebhooks(data: {
@@ -10,14 +11,11 @@ export default class WebhookService {
   }) {
     try {
       const { shop, key, secret } = data;
-      const apiUrl = `${getShopifyBaseUrl(
-        {
-          shopName: shop,
-          apiKey: key,
-          password: secret,
-        },
-        "2023-04"
-      )}/webhooks.json`;
+      const apiUrl = `${getShopifyBaseUrl({
+        shopName: shop,
+        apiKey: key,
+        password: secret,
+      })}/graphql.json`;
       const errorWebhooks: any = [];
       logger.info(
         `!!!!!Register Webhook started!!!!!! ${JSON.stringify(data, null, 2)}`
@@ -59,13 +57,20 @@ export default class WebhookService {
   }
 
   static async callRegisterWebhook(apiUrl: string, hook: any, secret: string) {
-    return axios.post(apiUrl, {
-      webhook: {
-        topic: hook.topic,
-        address: hook.address,
-        format: "json",
+    return axios.post(
+      apiUrl,
+      {
+        query: WEBHOOK_MUTATION,
+        variables: {
+          topic: hook.topic.toUpperCase(),
+          address: hook.address,
+        },
       },
-      "X-Shopify-Access-Token": secret,
-    });
+      {
+        headers: {
+          "X-Shopify-Access-Token": secret,
+        },
+      }
+    );
   }
 }

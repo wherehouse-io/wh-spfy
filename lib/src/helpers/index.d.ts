@@ -28,3 +28,26 @@ export declare const getCompanyId: (shopType: SHOP_TYPE, req: any) => string;
  * @return {string}
  */
 export declare const getWebhookId: (shopType: SHOP_TYPE, req: any) => string;
+export declare const cleanShopifyIds: (data: any) => any;
+export declare const convertShopifyOrderToRestOrder: (order: any) => {
+    billingAddress: any;
+    shippingAddress: any;
+    lineItems: any;
+    taxLines: any;
+    id: any;
+    totalWeight: any;
+    financialStatus: any;
+    customer: any;
+    currentTotalPrice: any;
+    discountCodes: any;
+    paymentGatewayNames: any;
+    tags: any;
+    shippingLines: any;
+    taxesIncluded: any;
+    fulfillments: any;
+    cancelledAt: any;
+    createdAt: any;
+    updatedAt: any;
+    name: any;
+};
+export declare function transformDataToProductList(data: any): any;
