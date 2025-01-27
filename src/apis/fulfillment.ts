@@ -33,7 +33,7 @@ export default class FulfillmentService {
    * @param shopify
    */
 
-  static async attachRequestId(requestId) {
+  static  attachRequestId(requestId) {
     requestIdNamespace.run(() => {
       requestIdNamespace.set("requestId", requestId);
     });
