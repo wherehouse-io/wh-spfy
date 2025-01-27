@@ -26,12 +26,12 @@ import { logger } from "../logger";
 export default class ProductService {
   public static shopType: SHOP_TYPE = SHOP_TYPE.SHOPIFY;
 
-  static attachRequestId(requestId) {
+  static attachRequestId(requestId, callback) {
     requestIdNamespace.run(() => {
       requestIdNamespace.set("requestId", requestId);
       const reqid = requestIdNamespace.get("requestId");
       logger.info(`---reqid---${JSON.stringify(reqid)}`);
-      return this;
+      callback();
     });
   }
 
