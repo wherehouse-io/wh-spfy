@@ -14,6 +14,7 @@ export default class FulfillmentService {
      * @param {Object} fulfillmentDetails
      * @param shopify
      */
+    static attachRequestId(requestId: any): Promise<typeof FulfillmentService>;
     static createNewFulfillment(fulfillmentDetails: any, ShopifyUrlInstance: ShopifyUrlInstance): Promise<unknown>;
     /**
      * Getting fulfillment details from shopify to check whether the order is already fulfilled or not
