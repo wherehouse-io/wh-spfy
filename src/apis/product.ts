@@ -29,9 +29,10 @@ export default class ProductService {
   static attachRequestId(requestId) {
     const context = requestIdNamespace.runAndReturn(() => {
       requestIdNamespace.set("requestId", requestId);
+      return { requestId };
     });
     logger.info(`---context---${JSON.stringify(context)}`);
-    return this;
+    return context;
   }
 
   /**
