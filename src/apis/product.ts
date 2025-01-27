@@ -21,7 +21,7 @@ import {
 import { ShopifyUrlInstance } from "../types/shopify";
 import ShopifyService from "./shopify";
 import requestIdNamespace from "../utils/namespace";
-import {logger} from "../logger";
+import { logger } from "../logger";
 
 export default class ProductService {
   public static shopType: SHOP_TYPE = SHOP_TYPE.SHOPIFY;
@@ -29,6 +29,8 @@ export default class ProductService {
   static attachRequestId(requestId) {
     requestIdNamespace.run(() => {
       requestIdNamespace.set("requestId", requestId);
+      const reqid = requestIdNamespace.get("requestId");
+      logger.info(`reqid---${JSON.stringify(reqid)}`);
     });
     return this;
   }

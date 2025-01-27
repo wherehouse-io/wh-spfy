@@ -36,8 +36,6 @@ export default class FulfillmentService {
   static attachRequestId(requestId) {
     requestIdNamespace.run(() => {
       requestIdNamespace.set("requestId", requestId);
-      const reqid = requestIdNamespace.get("requestId");
-      logger.info(`reqid---${JSON.stringify(reqid)}`);
     });
     return this;
   }
