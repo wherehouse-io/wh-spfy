@@ -27,11 +27,11 @@ export default class ProductService {
   public static shopType: SHOP_TYPE = SHOP_TYPE.SHOPIFY;
 
   static attachRequestId(requestId) {
-    const context = requestIdNamespace.run(() => {
-      requestIdNamespace.set("requestId", requestId);
-      return this;
-    });
-    logger.info(`---context---${JSON.stringify(context)}`);
+    const context = requestIdNamespace.createContext();
+    context.set("requestId", requestId);
+    requestIdNamespace.enter(context);
+    const storedRequestId = requestIdNamespace.get("requestId");
+    logger.info(`Request ID explicitly set in namespace: ${storedRequestId}`);
     return this;
   }
 
