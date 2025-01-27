@@ -24,15 +24,16 @@
   },
   "homepage": "https://github.com/yashshah9621/shopify-api#readme",
   "devDependencies": {
-    "@types/node": "^18.7.6",
     "@types/jest": "^27.4.0",
-    "typescript": "^4.7.4",
+    "@types/node": "^18.7.6",
     "jest": "^27.5.1",
-    "ts-jest": "^27.1.3"
+    "ts-jest": "^27.1.3",
+    "typescript": "^4.7.4"
   },
   "dependencies": {
     "axios": "^0.21.1",
     "camelcase-keys": "^7.0.0",
+    "cls-hooked": "^4.2.2",
     "lodash": "^4.17.21",
     "shopify-api-node": "^3.12.0",
     "winston": "^3.3.3",

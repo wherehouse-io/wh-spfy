@@ -1,11 +1,12 @@
 import * as logger from "winston";
+import requestIdNamespace from "./utils/namespace";
 
 const format = logger.format.combine(
-  logger.format.timestamp({ format: "DD-MM-YYYY HH:mm:ss:ms" }),
   logger.format.colorize({ all: false }),
-  logger.format.printf(
-    (info) => `${info.timestamp} ${info.level}: ${info.message}`
-  )
+  logger.format.printf((info) => {
+    const requestId = requestIdNamespace.get("requestId") || "-";
+    return `[${requestId}] ${info.level}: ${info.message}`;
+  })
 );
 
 logger.remove(logger.transports.Console);
