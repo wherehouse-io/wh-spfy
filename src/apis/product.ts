@@ -32,7 +32,7 @@ export default class ProductService {
       return this;
     });
     logger.info(`---context---${JSON.stringify(context)}`);
-    return context;
+    return this;
   }
 
   /**
