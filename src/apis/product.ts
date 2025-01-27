@@ -27,7 +27,7 @@ export default class ProductService {
   public static shopType: SHOP_TYPE = SHOP_TYPE.SHOPIFY;
 
   static attachRequestId(requestId) {
-    const context = requestIdNamespace.runAndReturn(() => {
+    const context = requestIdNamespace.run(() => {
       requestIdNamespace.set("requestId", requestId);
       return this;
     });
