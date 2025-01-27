@@ -29,7 +29,7 @@ export default class ProductService {
   static attachRequestId(requestId) {
     const context = requestIdNamespace.runAndReturn(() => {
       requestIdNamespace.set("requestId", requestId);
-      return { requestId };
+      return ProductService;
     });
     logger.info(`---context---${JSON.stringify(context)}`);
     return context;
