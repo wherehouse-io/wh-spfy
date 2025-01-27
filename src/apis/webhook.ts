@@ -2,8 +2,13 @@ import axios from "axios";
 import { getShopifyBaseUrl } from "../helpers";
 import { logger } from "../logger";
 import { WEBHOOK_MUTATION } from "../helpers/graphql/mutations";
+import { setRequestId } from "../utils/requestIdManager";
 
 export default class WebhookService {
+  static setRequestId(requestId: string) {
+    setRequestId(requestId); // Set the request ID in the global manager
+  }
+
   static async registerWebhooks(data: {
     key: string;
     secret: string;
