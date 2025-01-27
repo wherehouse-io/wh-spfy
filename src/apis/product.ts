@@ -20,19 +20,16 @@ import {
 } from "../helpers";
 import { ShopifyUrlInstance } from "../types/shopify";
 import ShopifyService from "./shopify";
-import requestIdNamespace from "../utils/namespace";
 import { logger } from "../logger";
+import { setRequestId } from "../utils/requestIdManager"; // Import the request ID manager
+
 
 export default class ProductService {
   public static shopType: SHOP_TYPE = SHOP_TYPE.SHOPIFY;
 
-  static attachRequestId(requestId) {
-    requestIdNamespace.run(() => {
-      requestIdNamespace.set("requestId", requestId);
-      const storedRequestId = requestIdNamespace.get("requestId");
-      logger.info(`Request ID set in namespace: ${storedRequestId}`);
-      return this;
-    });
+
+  static setRequestId(requestId: string) {
+    setRequestId(requestId); // Set the request ID in the global manager
   }
 
   /**

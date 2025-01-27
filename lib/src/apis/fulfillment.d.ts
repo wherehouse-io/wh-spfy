@@ -10,11 +10,11 @@ interface IFulfillmentDetails {
     shouldApplyNewVersion: boolean;
 }
 export default class FulfillmentService {
+    static setRequestId(requestId: string): void;
     /**
      * @param {Object} fulfillmentDetails
      * @param shopify
      */
-    static attachRequestId(requestId: any): typeof FulfillmentService;
     static createNewFulfillment(fulfillmentDetails: any, ShopifyUrlInstance: ShopifyUrlInstance): Promise<unknown>;
     /**
      * Getting fulfillment details from shopify to check whether the order is already fulfilled or not

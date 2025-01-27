@@ -1,10 +1,10 @@
 import * as logger from "winston";
-import requestIdNamespace from "./utils/namespace";
+import { getRequestId } from "./utils/requestIdManager";
 
 const format = logger.format.combine(
   logger.format.colorize({ all: false }),
   logger.format.printf((info) => {
-    const requestId = requestIdNamespace.get('requestId') || "-";
+    const requestId = getRequestId()
     return `[${requestId}] ${info.level}: ${info.message}`;
   })
 );

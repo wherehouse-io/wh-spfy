@@ -14,7 +14,8 @@ import {
   FULFILLMENT_MUTATION_WITH_MULTIPLE_TRACKING_URLS,
   MOVE_ORDER_FULFILLMENT_LOCATION_MUTATION,
 } from "../helpers/graphql/mutations";
-import requestIdNamespace from "../utils/namespace";
+import { setRequestId } from "../utils/requestIdManager"; // Import the request ID manager
+
 
 interface IFulfillmentDetails {
   location_id: string;
@@ -28,17 +29,17 @@ interface IFulfillmentDetails {
 }
 
 export default class FulfillmentService {
+
+
+  static setRequestId(requestId: string) {
+    setRequestId(requestId); // Set the request ID in the global manager
+  }
+
   /**
    * @param {Object} fulfillmentDetails
    * @param shopify
    */
 
-  static attachRequestId(requestId) {
-    requestIdNamespace.run(() => {
-      requestIdNamespace.set("requestId", requestId);
-    });
-    return this;
-  }
 
   static async createNewFulfillment(
     fulfillmentDetails: any,
