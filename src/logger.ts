@@ -4,7 +4,7 @@ import requestIdNamespace from "./utils/namespace";
 const format = logger.format.combine(
   logger.format.colorize({ all: false }),
   logger.format.printf((info) => {
-    const requestId = requestIdNamespace.get("requestId") || "-";
+    const requestId = requestIdNamespace.get('requestId') || "-";
     return `[${requestId}] ${info.level}: ${info.message}`;
   })
 );
