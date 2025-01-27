@@ -45,7 +45,6 @@ export default class ProductService {
     eventType: EVENT_TYPE,
     productData?: any
   ): IProduct[] | IProductDelete {
-    logger.info("heelo");
     let body: any = {};
     body = productData
       ? camelcaseKeys(productData, { deep: true })
