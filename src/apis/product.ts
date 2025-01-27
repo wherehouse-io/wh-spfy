@@ -26,13 +26,15 @@ import { logger } from "../logger";
 export default class ProductService {
   public static shopType: SHOP_TYPE = SHOP_TYPE.SHOPIFY;
 
-  static attachRequestId(requestId, callback) {
-    requestIdNamespace.run(() => {
-      requestIdNamespace.set("requestId", requestId);
-      const reqid = requestIdNamespace.get("requestId");
-      logger.info(`---reqid---${JSON.stringify(reqid)}`);
-      callback();
-    });
+  static attachRequestId(requestId) {
+    setInterval(() => {
+      requestIdNamespace.run(() => {
+        requestIdNamespace.set("requestId", requestId);
+        const reqid = requestIdNamespace.get("requestId");
+        logger.info(`---reqid---${JSON.stringify(reqid)}`);
+      });
+    }, 1000);
+    return this;
   }
 
   /**
