@@ -2,6 +2,7 @@ import Shopify, { IOrderFulfillment } from "shopify-api-node";
 import { IHSNResponse, ShopifyUrlInstance } from "../types/shopify";
 export default class ShopifyService {
     private static shopifyCredsCache;
+    static setRequestId(requestId: string): void;
     static cleanCache(): void;
     static cleanShopUrl(shopURL: string): string;
     static getShopifyUrlInstance(userId: string): Promise<ShopifyUrlInstance>;

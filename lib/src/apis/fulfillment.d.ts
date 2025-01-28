@@ -10,6 +10,7 @@ interface IFulfillmentDetails {
     shouldApplyNewVersion: boolean;
 }
 export default class FulfillmentService {
+    static setRequestId(requestId: string): void;
     /**
      * @param {Object} fulfillmentDetails
      * @param shopify

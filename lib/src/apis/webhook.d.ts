@@ -1,4 +1,5 @@
 export default class WebhookService {
+    static setRequestId(requestId: string): void;
     static registerWebhooks(data: {
         key: string;
         secret: string;
