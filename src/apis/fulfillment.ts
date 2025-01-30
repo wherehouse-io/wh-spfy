@@ -16,7 +16,6 @@ import {
 } from "../helpers/graphql/mutations";
 import { setRequestId } from "../utils/requestIdManager"; // Import the request ID manager
 
-
 interface IFulfillmentDetails {
   location_id: string;
   orderId: string;
@@ -29,9 +28,8 @@ interface IFulfillmentDetails {
 }
 
 export default class FulfillmentService {
-
-
   static setRequestId(requestId: string) {
+    logger.info(`---setRequestId----${JSON.stringify(requestId)}`);
     setRequestId(requestId); // Set the request ID in the global manager
   }
 
@@ -39,7 +37,6 @@ export default class FulfillmentService {
    * @param {Object} fulfillmentDetails
    * @param shopify
    */
-
 
   static async createNewFulfillment(
     fulfillmentDetails: any,
