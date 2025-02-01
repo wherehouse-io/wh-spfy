@@ -20,9 +20,17 @@ import {
 } from "../helpers";
 import { ShopifyUrlInstance } from "../types/shopify";
 import ShopifyService from "./shopify";
+import { logger } from "../logger";
+import { setRequestId } from "../utils/requestIdManager"; // Import the request ID manager
+
 
 export default class ProductService {
   public static shopType: SHOP_TYPE = SHOP_TYPE.SHOPIFY;
+
+
+  static setRequestId(requestId: string) {
+    setRequestId(requestId); // Set the request ID in the global manager
+  }
 
   /**
    * Used to extract Product Data from shopify webhook
@@ -55,7 +63,7 @@ export default class ProductService {
     // TODO: add HSN code
     variants?.forEach((variant: any) => {
       let variantItem: IProduct;
-  
+
       variantItem = {
         _id: productId,
         variantId: variant.id.toString(),

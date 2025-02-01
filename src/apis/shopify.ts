@@ -29,11 +29,16 @@ import {
   GET_PRODUCT_DATA,
   getProductsByIdsQuery,
 } from "../helpers/graphql/queries";
+import { setRequestId } from "../utils/requestIdManager";
 
 export default class ShopifyService {
   // maintain a local cache for shop api keys, password etc.
   // will be refreshed every week
   private static shopifyCredsCache = {};
+
+  static setRequestId(requestId: string) {
+    setRequestId(requestId); // Set the request ID in the global manager
+  }
 
   static cleanCache() {
     for (const prop of Object.getOwnPropertyNames(this.shopifyCredsCache)) {

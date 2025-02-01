@@ -3,6 +3,7 @@ import { SHOP_TYPE, IAddress } from "../types/product";
 import { ShopifyUrlInstance } from "../types/shopify";
 export default class ProductService {
     static shopType: SHOP_TYPE;
+    static setRequestId(requestId: string): void;
     /**
      * Used to extract Product Data from shopify webhook
      * @param{IRequest} req
