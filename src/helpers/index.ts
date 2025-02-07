@@ -120,7 +120,7 @@ const formattedOrderItem = (orderItems) => {
       price: item.originalTotal,
       variantId: item.variant?.id,
       productId: item.product?.id,
-      grams: item?.variant?.inventoryItem?.measurement?.weight?.value,
+      grams: Number(item?.variant?.inventoryItem?.measurement?.weight?.value),
       discountAllocations: formattedDiscountAllocations(
         item.discountAllocations
       ),
