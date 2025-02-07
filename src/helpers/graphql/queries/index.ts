@@ -76,6 +76,15 @@ query getOrderData($getOrderId: ID!) {
                                     amount
                                 }
                             }
+                            inventoryItem {
+                              requiresShipping
+                              measurement{
+                               weight{
+                                unit
+                                value
+                               }
+                              }
+                            }
                             currentQuantity
                             discountedTotal
                             discountedUnitPrice
@@ -87,7 +96,6 @@ query getOrderData($getOrderId: ID!) {
                             originalTotal
                             originalUnitPrice
                             quantity
-                            requiresShipping
                             refundableQuantity
                             restockable
                             sku

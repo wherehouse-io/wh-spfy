@@ -118,9 +118,9 @@ const formattedOrderItem = (orderItems) => {
     return {
       ...item,
       price: item.originalTotal,
-      variantId: item.variant.id,
-      productId: item.product.id,
-      grams: item.variant.weight,
+      variantId: item.variant?.id,
+      productId: item.product?.id,
+      grams: Number(item?.variant?.inventoryItem?.measurement?.weight?.value),
       discountAllocations: formattedDiscountAllocations(
         item.discountAllocations
       ),
@@ -134,7 +134,7 @@ const formattedDiscountAllocations = (discountAllocations) => {
   const resultedDiscountAllocations = discountAllocations.map((discount) => {
     return {
       ...discount,
-      amount: discount.allocatedAmount.amount,
+      amount: discount?.allocatedAmount?.amount,
     };
   });
   return resultedDiscountAllocations;
@@ -145,7 +145,7 @@ const formattedShippingLines = (shippingLines) => {
     const shippingLine = s.node;
     return {
       ...shippingLine,
-      discountedPrice: shippingLine.discountedPrice.amount,
+      discountedPrice: shippingLine?.discountedPrice?.amount,
     };
   });
   return resultedShippingLines;
@@ -166,7 +166,7 @@ const formattedFulfillments = (fulfillments) => {
   return fulfillments.map((fulfillment) => {
     return {
       ...fulfillment,
-      tracking_company: fulfillment.trackingInfo.company ?? " ",
+      tracking_company: fulfillment?.trackingInfo?.company ?? " ",
     };
   });
 };
