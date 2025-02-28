@@ -652,6 +652,8 @@ export default class ShopifyService {
         },
       });
 
+      logger.info(`---data---${JSON.stringify(data)}`);
+
       const formattedData = transformDataToProductList(data.data);
 
       return formattedData;

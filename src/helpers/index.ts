@@ -1,6 +1,7 @@
 import { ShopifyUrlInstance, SHOP_TYPE } from "../types/shopify";
 import { SHOPIFY_WEIGHT_UNITS } from "../types/product";
 import { ADDITIONAL_HEADER, WEBHOOK_ID_KEY } from "../constants/product";
+import { logger } from "../logger";
 
 /**
  * delay the exection of script for particular time period
@@ -206,7 +207,7 @@ export const convertShopifyOrderToRestOrder = (order: any) => {
 };
 
 export function transformDataToProductList(data) {
-  console.log(JSON.stringify(data));
+  logger.info(JSON.stringify(data));
   if (!data?.products?.nodes) {
     throw new Error("Invalid data structure: Missing products.nodes");
   }
