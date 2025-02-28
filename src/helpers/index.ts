@@ -229,6 +229,7 @@ export function transformDataToProductList(data) {
         weight: variant?.inventoryItem?.measurement?.weight?.value,
         weightUnit: variant?.inventoryItem?.measurement?.weight?.unit,
         productId: variant?.product?.id,
+        imageId: variant?.image?.id || "",
         inventory_item_id: variant?.inventoryItem?.id.match(/\d+/)[0],
       })),
     };
