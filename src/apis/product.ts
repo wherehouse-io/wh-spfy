@@ -167,8 +167,9 @@ export default class ProductService {
     try {
       let params = { limit: DEFAULT_PAGINATION_LIMIT_SHOPIFY_PRODUCT_LIST };
       let productLists: any = [];
+      let hasNextPage = true;
 
-      do {
+      while (hasNextPage) {
         // const products = await shopifyInstance.product.list({
         //   ...params,
         //   fields: `id,variants,images,title,handle,status,productType`,
@@ -178,10 +179,8 @@ export default class ProductService {
           params.limit
         );
         productLists = productLists.concat(products);
-
-        params = products.nextPageParameters;
-      } while (params !== undefined);
-
+        hasNextPage = products.hasNextPage || false;
+      }
       return productLists;
     } catch (error) {
       throw error;

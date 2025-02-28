@@ -1,6 +1,7 @@
 import { ShopifyUrlInstance, SHOP_TYPE } from "../types/shopify";
 import { SHOPIFY_WEIGHT_UNITS } from "../types/product";
 import { ADDITIONAL_HEADER, WEBHOOK_ID_KEY } from "../constants/product";
+import { logger } from "../logger";
 
 /**
  * delay the exection of script for particular time period
@@ -200,13 +201,13 @@ export const convertShopifyOrderToRestOrder = (order: any) => {
     cancelledAt: order.cancelledAt,
     createdAt: order.createdAt,
     updatedAt: order.updatedAt,
-    name : order.name
+    name: order.name,
     // paymentTerms: formattedPaymentTerms(order.paymentTerms),
   };
 };
 
 export function transformDataToProductList(data) {
-  console.log(data);
+  logger.info(JSON.stringify(data));
   if (!data?.products?.nodes) {
     throw new Error("Invalid data structure: Missing products.nodes");
   }
@@ -214,11 +215,22 @@ export function transformDataToProductList(data) {
     return {
       ...product,
       id: product.id.match(/\d+/)[0],
-      title: product.title,
+      status: data?.product?.status.toLowerCase(),
+      images: data?.product?.images?.edges.map((item) => {
+        return {
+          id: item.node.id,
+          src: item.node.src,
+        };
+      }),
+      hasNextPage: data?.products?.pageInfo?.hasNextPage,
       variants: product.variants.nodes.map((variant) => ({
         ...variant,
         id: variant.id.match(/\d+/)[0],
-        inventory_item_id: variant.inventoryItem.id.match(/\d+/)[0],
+        weight: variant?.inventoryItem?.measurement?.weight?.value,
+        weightUnit: variant?.inventoryItem?.measurement?.weight?.unit,
+        productId: variant?.product?.id,
+        imageId: variant?.image?.id || "",
+        inventory_item_id: variant?.inventoryItem?.id.match(/\d+/)[0],
       })),
     };
   });

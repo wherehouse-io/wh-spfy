@@ -219,23 +219,70 @@ export const GET_LOCATION_DATA = `
 `;
 
 export function getProductsByIdsQuery(query) {
-  return `query getProductsByIds($limit: Int!) {
-  products(query: "${query}", first: $limit) {
-    nodes {
-      id
-      title
-      variants(first: 250) {
+  let graphqlQuery = `query getProductsByIds($limit: Int!) {
+    products(first: $limit`;
+
+  if (query) {
+    graphqlQuery += `, query: "${query}"`;
+  }
+
+  graphqlQuery += `) {
           nodes {
-            id
-            inventoryItem {
-              id
-            }
-          }
+                id
+                productType
+                title
+                status
+                handle
+                images(first: 10) {
+                    edges {
+                        node {
+                            id
+                            src
+                        }
+                    }
+                }
+                variants(first: 250) {
+                        nodes {
+                            inventoryItem {
+                                id
+                                measurement {
+                                    weight {
+                                        unit
+                                        value
+                                    }
+                                }
+                            }
+                            title
+                            updatedAt
+                            createdAt
+                            taxable
+                            price
+                            product {
+                                id
+                            }
+                            inventoryQuantity
+                            barcode
+                            image {
+                                id
+                            }
+                            sku
+                            id
+                        }
+                    
+                }
+                createdAt
+                updatedAt
+                category {
+                    fullName
+                    id
+                    isArchived
+                }
+            
         }
     }
-  }
-}
-  `;
+  }`;
+
+  return graphqlQuery;
 }
 
 export const GET_PRODUCT_DATA = `

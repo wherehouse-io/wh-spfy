@@ -1,5 +1,5 @@
 import { FulfillmentProviders } from "./fulfillment";
-export declare const DEFAULT_PAGINATION_LIMIT_SHOPIFY_PRODUCT_LIST = 100;
+export declare const DEFAULT_PAGINATION_LIMIT_SHOPIFY_PRODUCT_LIST = 250;
 export declare enum EVENT_TYPE {
     CREATE = "create",
     UPDATE = "update",
