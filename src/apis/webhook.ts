@@ -27,7 +27,10 @@ export default class WebhookService {
         logger.info(`!!!!!Processing!!!!!! ${hook.topic}`);
         const Response = await this.callRegisterWebhook(apiUrl, hook, secret);
 
-        if (!Response?.data?.webhook?.id) {
+        if (
+          !Response?.data?.data?.webhookSubscriptionCreate?.webhookSubscription
+            ?.id
+        ) {
           logger.info(`!!!!!Not Completed!!!!!! ${hook.topic}`);
           errorWebhooks.push({
             topic: hook.topic,
@@ -62,7 +65,7 @@ export default class WebhookService {
       {
         query: WEBHOOK_MUTATION,
         variables: {
-          topic: hook.topic.toUpperCase(),
+          topic: hook.topic,
           address: hook.address,
         },
       },
