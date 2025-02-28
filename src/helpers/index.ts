@@ -216,6 +216,12 @@ export function transformDataToProductList(data) {
       ...product,
       id: product.id.match(/\d+/)[0],
       status: data?.product?.status.toLowerCase(),
+      images: data?.product?.images?.edges.map((item) => {
+        return {
+          id: item.node.id,
+          src: item.node.src,
+        };
+      }),
       hasNextPage: data?.products?.pageInfo?.hasNextPage,
       variants: product.variants.nodes.map((variant) => ({
         ...variant,
