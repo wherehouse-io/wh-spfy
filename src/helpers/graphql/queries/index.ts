@@ -244,6 +244,7 @@ export function getProductsByIdsQuery(query) {
                 variants(first: 250) {
                         nodes {
                             inventoryItem {
+                                id
                                 measurement {
                                     weight {
                                         unit
@@ -269,30 +270,12 @@ export function getProductsByIdsQuery(query) {
                         }
                     
                 }
-                combinedListingRole
                 createdAt
-                defaultCursor
-                customProductType
-                isGiftCard
-                legacyResourceId
-                onlineStorePreviewUrl
-                tags
                 updatedAt
-                publishedAt
-                seo {
-                    description
-                    title
-                }
                 category {
                     fullName
                     id
                     isArchived
-                }
-                giftCardTemplateSuffix
-                featuredImage {
-                    altText
-                    src
-                    width
                 }
             
         }
