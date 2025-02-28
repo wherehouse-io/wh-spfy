@@ -629,12 +629,15 @@ export default class ShopifyService {
       // }
       const baseUrl: string = getShopifyBaseUrl(shopify);
       const url = `${baseUrl}/graphql.json`;
+      let query;
       logger.info(`Shopify call: [${url}]`);
 
-      const query = productIds
-        ?.split(",")
-        .map((id) => `id:${id.trim()}`)
-        .join(" OR ");
+      if (productIds) {
+        query = productIds
+          ?.split(",")
+          .map((id) => `id:${id.trim()}`)
+          .join(" OR ");
+      }
 
       const { data } = await axios({
         method: "POST",

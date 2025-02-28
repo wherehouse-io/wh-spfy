@@ -1,7 +1,7 @@
 import { FulfillmentProviders } from "./fulfillment";
 
 // This limit is for shopify product listing, it can be maximum 100
-export const DEFAULT_PAGINATION_LIMIT_SHOPIFY_PRODUCT_LIST = 100;
+export const DEFAULT_PAGINATION_LIMIT_SHOPIFY_PRODUCT_LIST = 250;
 
 export enum EVENT_TYPE {
   CREATE = "create",
