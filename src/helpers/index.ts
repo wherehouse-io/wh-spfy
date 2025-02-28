@@ -215,8 +215,8 @@ export function transformDataToProductList(data) {
     return {
       ...product,
       id: product.id.match(/\d+/)[0],
-      status: data?.product?.status.toLowerCase(),
-      images: data?.product?.images?.edges.map((item) => {
+      status: product?.status.toLowerCase(),
+      images: product?.images?.edges.map((item) => {
         return {
           id: item.node.id,
           src: item.node.src,
@@ -228,7 +228,7 @@ export function transformDataToProductList(data) {
         id: variant.id.match(/\d+/)[0],
         weight: variant?.inventoryItem?.measurement?.weight?.value,
         weightUnit: variant?.inventoryItem?.measurement?.weight?.unit,
-        productId: variant?.product?.id,
+        productId: variant?.product?.id.match(/\d+/)[0],
         imageId: variant?.image?.id || "",
         inventory_item_id: variant?.inventoryItem?.id.match(/\d+/)[0],
       })),
