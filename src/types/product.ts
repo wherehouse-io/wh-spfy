@@ -66,6 +66,13 @@ export enum WP_ORDER_STATUS {
   CANCELLED = "cancelled",
 }
 
+export const weightUnitStringMap: Record<string, SHOPIFY_WEIGHT_UNITS> = {
+  GRAMS: SHOPIFY_WEIGHT_UNITS.GRAMS,
+  KILOGRAMS: SHOPIFY_WEIGHT_UNITS.KILOGRAMS,
+  OUNCES: SHOPIFY_WEIGHT_UNITS.OUNCES,
+  POUNDS: SHOPIFY_WEIGHT_UNITS.POUNDS,
+};
+
 export interface IAggregatorCourierIdAndName {
   cp_id: string;
   cp_name: string;

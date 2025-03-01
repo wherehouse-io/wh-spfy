@@ -1,5 +1,5 @@
 import { ShopifyUrlInstance, SHOP_TYPE } from "../types/shopify";
-import { SHOPIFY_WEIGHT_UNITS } from "../types/product";
+import { SHOPIFY_WEIGHT_UNITS, weightUnitStringMap } from "../types/product";
 import { ADDITIONAL_HEADER, WEBHOOK_ID_KEY } from "../constants/product";
 import { logger } from "../logger";
 
@@ -31,15 +31,16 @@ export const convertShopifyWeightToGrams = (
   weightUnit: SHOPIFY_WEIGHT_UNITS,
   weight: number
 ): number => {
-  const shopifyWeightConvertMap = {
+  const shopifyWeightConvertMap: Record<SHOPIFY_WEIGHT_UNITS, number> = {
     [SHOPIFY_WEIGHT_UNITS.GRAMS]: 1,
     [SHOPIFY_WEIGHT_UNITS.KILOGRAMS]: 1000,
     [SHOPIFY_WEIGHT_UNITS.OUNCES]: 28.35,
     [SHOPIFY_WEIGHT_UNITS.POUNDS]: 454,
   };
   return (
-    parseFloat(String(shopifyWeightConvertMap[weightUnit])) *
-    parseFloat(String(weight))
+    parseFloat(
+      String(shopifyWeightConvertMap[weightUnitStringMap[weightUnit]])
+    ) * parseFloat(String(weight))
   );
 };
 

@@ -53,6 +53,7 @@ export declare enum WP_ORDER_STATUS {
     PROCESSING = "processing",
     CANCELLED = "cancelled"
 }
+export declare const weightUnitStringMap: Record<string, SHOPIFY_WEIGHT_UNITS>;
 export interface IAggregatorCourierIdAndName {
     cp_id: string;
     cp_name: string;
