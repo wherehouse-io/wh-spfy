@@ -279,11 +279,12 @@ export function getProductsByIdsQuery(query) {
                 }
             
         }
-    }
-     pageInfo {
+         pageInfo {
             hasNextPage
             endCursor
      }
+    }
+    
   }`;
 
   return graphqlQuery;
