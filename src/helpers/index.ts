@@ -195,7 +195,7 @@ export const convertShopifyOrderToRestOrder = (order: any) => {
     currentTotalPrice: order.currentTotalPriceSet.shopMoney.amount,
     discountCodes: order.discountCodes,
     paymentGatewayNames: order.paymentGatewayNames,
-    tags: order.tags[0],
+    tags: order.tags.length > 0 ? order.tags[0] : "",
     shippingLines: formattedShippingLines(order.shippingLines.edges),
     taxesIncluded: order.taxesIncluded,
     fulfillments: formattedFulfillments(order.fulfillments),

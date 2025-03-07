@@ -61,6 +61,7 @@ query getOrderData($getOrderId: ID!) {
                 lineItems(first: 20) {
                     edges {
                         node {
+                            quantity
                             originalUnitPrice
                             originalTotal
                             originalTotalSet {
@@ -76,7 +77,8 @@ query getOrderData($getOrderId: ID!) {
                                     amount
                                 }
                             }
-                            inventoryItem {
+                            variant{
+                             inventoryItem {
                               requiresShipping
                               measurement{
                                weight{
@@ -85,6 +87,8 @@ query getOrderData($getOrderId: ID!) {
                                }
                               }
                             }
+                            }
+                            
                             currentQuantity
                             discountedTotal
                             discountedUnitPrice
@@ -108,6 +112,7 @@ query getOrderData($getOrderId: ID!) {
                                 id
                             }
                             taxLines {
+                                title
                                 rate
                                 ratePercentage
                             }
@@ -200,8 +205,7 @@ query getOrderData($getOrderId: ID!) {
                 tags
                 id
             }
-        }
-`;
+        }`;
 
 export const GET_LOCATION_DATA = `
   query getLocationData {
