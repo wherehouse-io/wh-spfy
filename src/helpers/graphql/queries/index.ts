@@ -78,6 +78,7 @@ query getOrderData($getOrderId: ID!) {
                                 }
                             }
                             variant{
+                             id 
                              inventoryItem {
                               requiresShipping
                               measurement{
@@ -105,9 +106,6 @@ query getOrderData($getOrderId: ID!) {
                             sku
                             variantTitle
                             vendor
-                            variant {
-                                id
-                            }
                             product {
                                 id
                             }
