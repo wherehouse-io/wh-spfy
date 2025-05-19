@@ -784,10 +784,10 @@ export default class ShopifyService {
         },
       });
 
-      if (data.errors) {
+      if (data.userErrors.length > 0) {
         throw new Error(
           `Shopify GraphQL Error  At Create Transaction: ${JSON.stringify(
-            data.errors
+            data.userErrors[0].message
           )}`
         );
       }
@@ -795,6 +795,8 @@ export default class ShopifyService {
       const markCodOrderAsPaidData = data.data.orderMarkAsPaid.order;
       if (markCodOrderAsPaidData.displayFinancialStatus !== "PAID") {
         throw new Error("mark cod order as paid failed");
+      } else {
+        logger.info(`mark cod order as paid success`);
       }
 
       return markCodOrderAsPaidData;
