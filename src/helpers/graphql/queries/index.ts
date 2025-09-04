@@ -266,6 +266,7 @@ export function getProductsByIdsQuery(query) {
                             barcode
                             image {
                                 id
+                                src
                             }
                             sku
                             id

@@ -48,9 +48,8 @@ export const getShopifyBaseUrl = (
   shopify: ShopifyUrlInstance,
   version?: string
 ) => {
-  return `https://${shopify.apiKey}:${shopify.password}@${
-    shopify.shopName
-  }/admin/api/${version || "2024-10"}`;
+  return `https://${shopify.apiKey}:${shopify.password}@${shopify.shopName
+    }/admin/api/${version || "2024-10"}`;
 };
 
 export const getShopifyOauthBaseUrl = (shopify: ShopifyUrlInstance) => {
@@ -213,26 +212,34 @@ export function transformDataToProductList(data) {
     throw new Error("Invalid data structure: Missing products.nodes");
   }
   return data.products.nodes.map((product) => {
+    const productImages = product?.images?.edges.map((item) => ({
+      id: item.node.id,
+      src: item.node.src,
+    }));
+
+    const firstProductImage = productImages?.[0] || null;
     return {
       ...product,
       id: product.id.match(/\d+/)[0],
       status: product?.status.toLowerCase(),
-      images: product?.images?.edges.map((item) => {
-        return {
-          id: item.node.id,
-          src: item.node.src,
-        };
-      }),
+      images: productImages,
       hasNextPage: data?.products?.pageInfo?.hasNextPage,
-      variants: product.variants.nodes.map((variant) => ({
-        ...variant,
-        id: variant.id.match(/\d+/)[0],
-        weight: variant?.inventoryItem?.measurement?.weight?.value,
-        weightUnit: variant?.inventoryItem?.measurement?.weight?.unit,
-        productId: variant?.product?.id.match(/\d+/)[0],
-        imageId: variant?.image?.id || "",
-        inventory_item_id: variant?.inventoryItem?.id.match(/\d+/)[0],
-      })),
-    };
-  });
+        variants: product.variants.nodes.map((variant) => {
+          const fallbackImage = variant?.image
+            ? productImages.find((img) => img.id === variant.image.id)
+            : firstProductImage;
+          return {
+            ...variant,
+            id: variant.id.match(/\d+/)[0],
+            weight: variant?.inventoryItem?.measurement?.weight?.value,
+            weightUnit: variant?.inventoryItem?.measurement?.weight?.unit,
+            productId: variant?.product?.id.match(/\d+/)[0],
+            imageId: variant?.image?.id || fallbackImage?.id || "",
+            imageSrc: fallbackImage?.src || "",
+            inventory_item_id: variant?.inventoryItem?.id.match(/\d+/)[0],
+          };
+    }),
+  };
+});
 }
+
