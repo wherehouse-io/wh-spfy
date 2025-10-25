@@ -55,7 +55,7 @@ export default class ProductService {
     // TODO: add HSN code
     variants?.forEach((variant: any) => {
       let variantItem: IProduct;
-  
+
       variantItem = {
         _id: productId,
         variantId: variant.id.toString(),
@@ -90,7 +90,7 @@ export default class ProductService {
           ? images
               .filter((image: { id: any }) => image.id === variant.imageId)
               .map((o: { src: any }) => o.src)
-          : [images[0].src],
+          : [images[0]?.src],
         productType: PRODUCT_TYPE.VARIATION,
         dimensions: {},
       };
@@ -147,7 +147,7 @@ export default class ProductService {
           ? images
               .filter((image: { id: any }) => image.id === variant.imageId)
               .map((o: { src: any }) => o.src)
-          : [images[0].src],
+          : [images[0]?.src],
         productType: PRODUCT_TYPE.VARIATION,
         dimensions: {},
       };
